@@ -9,7 +9,7 @@ namespace RebornRotations.Healer;
 public sealed class WHM_Default : WhiteMageRotation
 {
     #region Config Options
-    [RotationConfig(CombatType.PvE, Name = "Use Tincture/Gemdraught when about to use Prescense of Mind")]
+    [RotationConfig(CombatType.PvE, Name = "Use Tincture/Gemdraught when about to use Presence of Mind")]
     public bool UseMedicine { get; set; } = true;
 
     [RotationConfig(CombatType.PvE, Name = "Enable Swiftcast Restriction Logic to attempt to prevent actions other than Raise when you have swiftcast")]
@@ -34,10 +34,10 @@ public sealed class WHM_Default : WhiteMageRotation
     [RotationConfig(CombatType.PvE, Name = "Regen on Tank at 5 seconds remaining on Prepull Countdown.")]
     public bool UsePreRegen { get; set; } = true;
 
-    [RotationConfig(CombatType.PvE, Name = "Use Divine Carress as soon as its available")]
+    [RotationConfig(CombatType.PvE, Name = "Use Divine Caress as soon as it's available")]
     public bool UseDivine { get; set; } = false;
 
-    [RotationConfig(CombatType.PvE, Name = "Use Asylum as soon a single player heal (i.e. tankbusters) while moving, in addition to normal logic")]
+    [RotationConfig(CombatType.PvE, Name = "Use Asylum as soon as a single player heal (i.e. tankbusters) while moving, in addition to normal logic")]
     public bool AsylumSingle { get; set; } = false;
 
     [Range(0, 1, ConfigUnitType.Percent)]
