@@ -1,10 +1,10 @@
 namespace RebornRotations.Ranged;
 
-[Rotation("Default", CombatType.PvE, GameVersion = "7.25",
+[Rotation("Reborn", CombatType.PvE, GameVersion = "7.25",
     Description = "Please make sure that the three song times add up to 120 seconds, Wanderers default first song for now.")]
-[SourceCode(Path = "main/BasicRotations/Ranged/BRD_Default.cs")]
+[SourceCode(Path = "main/RebornRotations/Ranged/BRD_Reborn.cs")]
 [Api(5)]
-public sealed class BRD_Default : BardRotation
+public sealed class BRD_Reborn : BardRotation
 {
     #region Config Options
 
@@ -17,6 +17,10 @@ public sealed class BRD_Default : BardRotation
 
     [RotationConfig(CombatType.PvE, Name = "Only use DOTs on targets with Boss Icon")]
     public bool DOTBoss { get; set; } = false;
+
+    [Range(80, 100, ConfigUnitType.None, 5)]
+    [RotationConfig(CombatType.PvE, Name = "Soul Voice Threshold for Apex Arrow")]
+    public float SoulVoiceConfig { get; set; } = 100;
 
     [Range(1, 45, ConfigUnitType.Seconds, 1)]
     [RotationConfig(CombatType.PvE, Name = "Wanderer's Minuet Uptime")]
@@ -503,12 +507,12 @@ public sealed class BRD_Default : BardRotation
             return false;
         }
 
-        if (QuickNockPvE.CanUse(out _) && SoulVoice == 100)
+        if (QuickNockPvE.CanUse(out _) && SoulVoice == SoulVoiceConfig)
         {
             return true;
         }
 
-        if (LadonsbitePvE.CanUse(out _) && SoulVoice == 100)
+        if (LadonsbitePvE.CanUse(out _) && SoulVoice == SoulVoiceConfig)
         {
             return true;
         }
@@ -523,7 +527,7 @@ public sealed class BRD_Default : BardRotation
             return false;
         }
 
-        if (SoulVoice == 100 && BattleVoicePvE.Cooldown.WillHaveOneCharge(25))
+        if (SoulVoice == SoulVoiceConfig && BattleVoicePvE.Cooldown.WillHaveOneCharge(25))
         {
             return false;
         }
@@ -533,7 +537,7 @@ public sealed class BRD_Default : BardRotation
             return true;
         }
 
-        if (SoulVoice == 100 && HasRagingStrikes && HasBattleVoice)
+        if (SoulVoice == SoulVoiceConfig && HasRagingStrikes && HasBattleVoice)
         {
             return true;
         }
@@ -543,7 +547,7 @@ public sealed class BRD_Default : BardRotation
             return true;
         }
 
-        if (!HasRagingStrikes && SoulVoice == 100)
+        if (!HasRagingStrikes && SoulVoice == SoulVoiceConfig)
         {
             return true;
         }

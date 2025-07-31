@@ -8,11 +8,6 @@ public partial class PaladinRotation
     /// <summary>
     /// 
     /// </summary>
-    public override bool CanHealSingleSpell => DataCenter.PartyMembers.Count == 1 && base.CanHealSingleSpell;
-
-    /// <summary>
-    /// 
-    /// </summary>
     public override bool CanHealAreaAbility => false;
 
     /// <inheritdoc/>

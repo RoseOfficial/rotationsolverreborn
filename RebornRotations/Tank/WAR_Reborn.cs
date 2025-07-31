@@ -1,9 +1,9 @@
 namespace RebornRotations.Tank;
 
-[Rotation("Default", CombatType.PvE, GameVersion = "7.25")]
-[SourceCode(Path = "main/BasicRotations/Tank/WAR_Default.cs")]
+[Rotation("Reborn", CombatType.PvE, GameVersion = "7.25")]
+[SourceCode(Path = "main/RebornRotations/Tank/WAR_Reborn.cs")]
 [Api(5)]
-public sealed class WAR_Default : WarriorRotation
+public sealed class WAR_Reborn : WarriorRotation
 {
     #region Config Options
     [RotationConfig(CombatType.PvE, Name = "Only use Nascent Flash if Tank Stance is off")]

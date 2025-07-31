@@ -18,7 +18,19 @@ public sealed class PhantomDefault : PhantomRotation
     [RotationConfig(CombatType.PvE, Name = "Use Pray as a Heal", PhantomJob = PhantomJob.Knight)]
     public bool PrayHeal { get; set; } = false;
 
-    [RotationConfig(CombatType.PvE, Name = "Phantom Oracle - Use Invulnerability for Starfall", PhantomJob = PhantomJob.Oracle)]
+    [RotationConfig(CombatType.PvE, Name = "Use Phantom Judgement", PhantomJob = PhantomJob.Oracle)]
+    public bool PhantomJudgementUseage { get; set; } = true;
+
+    [RotationConfig(CombatType.PvE, Name = "Use Cleansing", PhantomJob = PhantomJob.Oracle)]
+    public bool CleansingUseage { get; set; } = true;
+
+    [RotationConfig(CombatType.PvE, Name = "Use Blessing", PhantomJob = PhantomJob.Oracle)]
+    public bool BlessingUseage { get; set; } = true;
+
+    [RotationConfig(CombatType.PvE, Name = "Use Starfall", PhantomJob = PhantomJob.Oracle)]
+    public bool StarfallUseage { get; set; } = true;
+
+    [RotationConfig(CombatType.PvE, Name = "Use Invulnerability for Starfall", PhantomJob = PhantomJob.Oracle)]
     public bool SaveInvulnForStarfall { get; set; } = true;
 
     [Range(1, 15, ConfigUnitType.Yalms)]
@@ -360,12 +372,12 @@ public sealed class PhantomDefault : PhantomRotation
             return true;
         }
 
-        if (BlessingPvE.CanUse(out act) && (PartyMembersAverHP < PredictBlessingThreshold || Player.GetHealthRatio() < PredictBlessingThreshold)) // Phantom heal gets a larger threshold than normal healing
+        if (BlessingUseage && BlessingPvE.CanUse(out act) && (PartyMembersAverHP < PredictBlessingThreshold || Player.GetHealthRatio() < PredictBlessingThreshold)) // Phantom heal gets a larger threshold than normal healing
         {
             return true;
         }
 
-        if ((PartyMembersAverHP < PredictJudgementThreshold || Player.GetHealthRatio() < PredictJudgementThreshold) && PhantomJudgmentPvE.CanUse(out act)) // Heal the party or self if we're below the heal + damage threshold
+        if (PhantomJudgementUseage && (PartyMembersAverHP < PredictJudgementThreshold || Player.GetHealthRatio() < PredictJudgementThreshold) && PhantomJudgmentPvE.CanUse(out act)) // Heal the party or self if we're below the heal + damage threshold
         {
             return true;
         }
@@ -406,12 +418,12 @@ public sealed class PhantomDefault : PhantomRotation
             return false;
         }
 
-        if (BlessingPvE.CanUse(out act) && (PartyMembersAverHP < PredictBlessingThreshold || Player.GetHealthRatio() < PredictBlessingThreshold)) // Phantom heal gets a larger threshold than normal healing
+        if (BlessingUseage && BlessingPvE.CanUse(out act) && (PartyMembersAverHP < PredictBlessingThreshold || Player.GetHealthRatio() < PredictBlessingThreshold)) // Phantom heal gets a larger threshold than normal healing
         {
             return true;
         }
 
-        if ((PartyMembersAverHP < PredictJudgementThreshold || Player.GetHealthRatio() < PredictJudgementThreshold) && PhantomJudgmentPvE.CanUse(out act)) // Heal the party or self if we're below the heal + damage threshold
+        if (PhantomJudgementUseage && (PartyMembersAverHP < PredictJudgementThreshold || Player.GetHealthRatio() < PredictJudgementThreshold) && PhantomJudgmentPvE.CanUse(out act)) // Heal the party or self if we're below the heal + damage threshold
         {
             return true;
         }
@@ -763,7 +775,7 @@ public sealed class PhantomDefault : PhantomRotation
 
         // Desired Card Actions before we get into forced actions
         // Check starfall-invuln combo
-        if (StarfallPvE.CanUse(out act))
+        if (StarfallUseage && StarfallPvE.CanUse(out act))
         {
             if (ShouldHoldBurst() && !Player.WillStatusEnd(3, true, StatusID.PredictionOfStarfall) && !Player.WillStatusEnd(3, false, StatusID.PredictionOfStarfall)) // If we're holding burst, we don't want to use starfall yet, but only to a point
             {
@@ -782,19 +794,18 @@ public sealed class PhantomDefault : PhantomRotation
         }
 
         // Do the invuln part of the combo
-        if (InCombat && HasStarfall && SaveInvulnForStarfall && InvulnerabilityPvE.CanUse(out act))
+        if (StarfallUseage && InCombat && HasStarfall && SaveInvulnForStarfall && InvulnerabilityPvE.CanUse(out act))
         {
             // If we have starfall and can use Invulnerability and we've opted to save invuln for this we're going to make sure we use it on ourselves
-            if (InvulnerabilityPvE.Target.Target != Player)
+            if (InvulnerabilityPvE.Target.Target == Player)
             {
-                InvulnerabilityPvE.Target = new TargetResult(Player, [Player], Player.Position);
+                return true;
             }
-            return true;
         }
 
         if (HasTankStance && (!SaveInvulnForStarfall || OracleLevel < 6)) // Tanking and either can't or won't invuln self
         {
-            if (CleansingPvE.CanUse(out act)) // Cleansing is our highest potency option that doesn't rely on invulns
+            if (CleansingUseage && CleansingPvE.CanUse(out act)) // Cleansing is our highest potency option that doesn't rely on invulns
             {
                 if (!ShouldHoldBurst() || Player.WillStatusEnd(3, true, StatusID.PredictionOfCleansing) || Player.WillStatusEnd(3, false, StatusID.PredictionOfCleansing))
                 {

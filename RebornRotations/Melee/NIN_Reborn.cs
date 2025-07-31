@@ -1,10 +1,10 @@
 namespace RebornRotations.Melee;
 
-[Rotation("Default", CombatType.PvE, GameVersion = "7.25")]
-[SourceCode(Path = "main/BasicRotations/Melee/NIN_Default.cs")]
+[Rotation("Reborn", CombatType.PvE, GameVersion = "7.25")]
+[SourceCode(Path = "main/RebornRotations/Melee/NIN_Reborn.cs")]
 [Api(5)]
 
-public sealed class NIN_Default : NinjaRotation
+public sealed class NIN_Reborn : NinjaRotation
 {
     #region Config Options
     // Configuration properties for rotation behavior.

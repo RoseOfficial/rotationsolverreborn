@@ -35,7 +35,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Magical\BLM_zAlpha.cs" />
-    <None Include="Tank\GNB_Default.cs" />
+    <None Include="Tank\GNB_Reborn.cs" />
   </ItemGroup>
   <ItemGroup>
 	  <Reference Include="Dalamud">

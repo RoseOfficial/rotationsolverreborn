@@ -2,10 +2,10 @@ using Dalamud.Interface.Colors;
 
 namespace RebornRotations.Ranged;
 
-[Rotation("Default", CombatType.PvE, GameVersion = "7.25")]
-[SourceCode(Path = "main/BasicRotations/Ranged/DNC_Default.cs")]
+[Rotation("Reborn", CombatType.PvE, GameVersion = "7.25")]
+[SourceCode(Path = "main/RebornRotations/Ranged/DNC_Reborn.cs")]
 [Api(5)]
-public sealed class DNC_Default : DancerRotation
+public sealed class DNC_Reborn : DancerRotation
 {
     #region Config Options
     [RotationConfig(CombatType.PvE, Name = "Holds Tech Step if no targets in range (Warning, will drift)")]
@@ -71,27 +71,21 @@ public sealed class DNC_Default : DancerRotation
             return true;
         }
 
-        if (HasTechnicalFinish)
+        if (IsBurst && DevilmentPvE.CanUse(out act))
         {
-            if (DevilmentPvE.CanUse(out act))
+            if (HasTechnicalFinish)
             {
                 return true;
             }
-        }
 
-        // Special handling if the last action was Quadruple Technical Finish and level requirement is met
-        if (IsLastGCD(ActionID.QuadrupleTechnicalFinishPvE) && TechnicalStepPvE.EnoughLevel)
-        {
-            // Attempt to use Devilment ignoring clipping checks
-            if (DevilmentPvE.CanUse(out act))
+            // Special handling if the last action was Quadruple Technical Finish and level requirement is met
+            if (IsLastGCD(ActionID.QuadrupleTechnicalFinishPvE) && TechnicalStepPvE.EnoughLevel)
             {
+                // Attempt to use Devilment ignoring clipping checks
                 return true;
             }
-        }
-        // Similar handling for Double Standard Finish when level requirement is not met
-        else if (IsLastGCD(ActionID.DoubleStandardFinishPvE) && !TechnicalStepPvE.EnoughLevel)
-        {
-            if (DevilmentPvE.CanUse(out act))
+            // Similar handling for Double Standard Finish when level requirement is not met
+            else if (IsLastGCD(ActionID.DoubleStandardFinishPvE) && !TechnicalStepPvE.EnoughLevel)
             {
                 return true;
             }
@@ -169,15 +163,18 @@ public sealed class DNC_Default : DancerRotation
             return false;
         }
 
-        // Skip using Flourish if Technical Step is about to come off cooldown
-        if (!TechnicalStepPvE.Cooldown.ElapsedAfter(116) || TillanaPvE.CanUse(out _))
+        if (IsBurst)
         {
-            // Check for conditions to use Flourish
-            if ((HasDevilment && HasTechnicalFinish) || ((!HasDevilment) && (!HasTechnicalFinish)))
+            // Skip using Flourish if Technical Step is about to come off cooldown
+            if (!TechnicalStepPvE.Cooldown.ElapsedAfter(116) || TillanaPvE.CanUse(out _))
             {
-                if (!HasThreefoldFanDance && FlourishPvE.CanUse(out act))
+                // Check for conditions to use Flourish
+                if ((HasDevilment && HasTechnicalFinish) || ((!HasDevilment) && (!HasTechnicalFinish)))
                 {
-                    return true;
+                    if (!HasThreefoldFanDance && FlourishPvE.CanUse(out act))
+                    {
+                        return true;
+                    }
                 }
             }
         }

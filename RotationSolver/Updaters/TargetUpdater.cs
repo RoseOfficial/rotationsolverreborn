@@ -3,15 +3,14 @@ using ECommons.ExcelServices;
 using ECommons.GameFunctions;
 using ECommons.GameHelpers;
 using ECommons.Logging;
-using RotationSolver.Basic.Rotations.Duties;
 
 namespace RotationSolver.Updaters;
 
 internal static partial class TargetUpdater
 {
     private static readonly ObjectListDelay<IBattleChara>
-        _raisePartyTargets = new(() => Service.Config.RaiseDelay),
-        _raiseAllTargets = new(() => Service.Config.RaiseDelay),
+        _raisePartyTargets = new(() => Service.Config.RaiseDelay2),
+        _raiseAllTargets = new(() => Service.Config.RaiseDelay2),
         _dispelPartyTargets = new(() => Service.Config.EsunaDelay);
 
     private static DateTime _lastUpdateTimeToKill = DateTime.MinValue;
@@ -103,7 +102,7 @@ internal static partial class TargetUpdater
 
         foreach (IBattleChara target in allTargets)
         {
-            if (!target.IsEnemy() || !target.IsTargetable || !target.CanSee())
+            if (!target.IsEnemy() || !target.IsTargetable || !target.CanSee() || target.DistanceToPlayer() >= 48)
                 continue;
 
             bool hasInvincible = false;
@@ -153,7 +152,7 @@ internal static partial class TargetUpdater
 
     private static IBattleChara? GetDeathTarget()
     {
-        if ((Player.Job is Job.WHM or Job.SCH or Job.AST or Job.SGE or Job.SMN or Job.RDM) || (DutyRotation.ChemistLevel >= 3))
+        if (DataCenter.CanRaise())
         {
             try
             {
@@ -175,7 +174,7 @@ internal static partial class TargetUpdater
                 {
                     if (DataCenter.AllianceMembers != null)
                     {
-                        foreach (var member in DataCenter.AllianceMembers)
+                        foreach (var member in DataCenter.AllianceMembers.GetDeath())
                         {
                             if (!deathParty.Contains(member))
                             {

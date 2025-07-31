@@ -120,7 +120,8 @@ public partial class WhiteMageRotation
 
     static partial void ModifyRaisePvE(ref ActionSetting setting)
     {
-
+        setting.ActionCheck = () => Player.CurrentMp >= RaiseMPMinimum || HasThinAir;
+        setting.MPOverride = () => HasThinAir ? 0 : (uint)2400;
     }
 
     static partial void ModifyStoneIiPvE(ref ActionSetting setting)

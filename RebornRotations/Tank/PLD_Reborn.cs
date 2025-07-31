@@ -2,13 +2,16 @@
 
 namespace RebornRotations.Tank;
 
-[Rotation("Default", CombatType.PvE, GameVersion = "7.25")]
-[SourceCode(Path = "main/BasicRotations/Tank/PLD_Default.cs")]
+[Rotation("Reborn", CombatType.PvE, GameVersion = "7.25")]
+[SourceCode(Path = "main/RebornRotations/Tank/PLD_Reborn.cs")]
 [Api(5)]
 
-public sealed class PLD_Default : PaladinRotation
+public sealed class PLD_Reborn : PaladinRotation
 {
     #region Config Options
+
+    [RotationConfig(CombatType.PvE, Name = "Use GCDs to heal. (Ignored if there are no healers alive in party)")]
+    public bool GCDHeal { get; set; } = false;
 
     [RotationConfig(CombatType.PvE, Name = "Only use Fight or Flight while in melee range of an enemy")]
     public bool MeleeFoF { get; set; } = true;
@@ -496,6 +499,22 @@ public sealed class PLD_Default : PaladinRotation
         }
 
         return false;
+    }
+
+    public override bool CanHealSingleSpell
+    {
+        get
+        {
+            int aliveHealerCount = 0;
+            IEnumerable<IBattleChara> healers = PartyMembers.GetJobCategory(JobRole.Healer);
+            foreach (IBattleChara h in healers)
+            {
+                if (!h.IsDead)
+                    aliveHealerCount++;
+            }
+
+            return base.CanHealSingleSpell && (GCDHeal || aliveHealerCount == 0);
+        }
     }
     #endregion
 }

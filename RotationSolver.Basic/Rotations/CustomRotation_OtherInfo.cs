@@ -2,8 +2,9 @@
 using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Plugin.Services;
 using ECommons.DalamudServices;
-using ECommons.ExcelServices;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
+using Lumina.Excel;
+using Lumina.Excel.Sheets;
 
 namespace RotationSolver.Basic.Rotations;
 public partial class CustomRotation
@@ -86,6 +87,30 @@ public partial class CustomRotation
 
         int minutes = (int)Math.Floor(CombatTime / 60f);
         return minutes % 2 == 0;
+    }
+
+    /// <summary>
+    /// Gets the party's class/job composition as a read-only list.
+    /// </summary>
+    public static IReadOnlyList<RowRef<ClassJob>> PartyComposition
+    {
+        get
+        {
+            var result = new List<RowRef<ClassJob>>();
+            if (PartyMembers == null)
+            {
+                return result.AsReadOnly();
+            }
+
+            foreach (var member in PartyMembers)
+            {
+                if (member != null)
+                {
+                    result.Add(member.ClassJob);
+                }
+            }
+            return result.AsReadOnly();
+        }
     }
 
     /// <summary>
@@ -338,6 +363,11 @@ public partial class CustomRotation
     /// </summary>
     [Description("Can heal single spell")]
     public virtual bool CanHealSingleSpell => true;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public static int RaiseMPMinimum => Service.Config.LessMPNoRaise;
 
     /// <summary>
     /// Is RSR enabled.
@@ -656,6 +686,14 @@ public partial class CustomRotation
     {
         CountingOfLastUsing++;
         return IActionHelper.IsLastComboAction(ids);
+    }
+
+    /// <summary>
+    ///
+    /// </summary>
+    public static bool IsNoActionCombo()
+    {
+        return IActionHelper.IsNoActionCombo();
     }
 
     /// <summary>

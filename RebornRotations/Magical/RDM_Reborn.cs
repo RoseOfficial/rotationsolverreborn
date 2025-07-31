@@ -1,11 +1,14 @@
 ﻿namespace RebornRotations.Magical;
 
 [Rotation("Reborn", CombatType.PvE, GameVersion = "7.25")]
-[SourceCode(Path = "main/BasicRotations/Magical/RDM_Reborn.cs")]
+[SourceCode(Path = "main/RebornRotations/Magical/RDM_Reborn.cs")]
 [Api(5)]
 public sealed class RDM_Reborn : RedMageRotation
 {
     #region Config Options
+    [RotationConfig(CombatType.PvE, Name = "Use GCDs to heal. (Ignored if there are no healers alive in party)")]
+    public bool GCDHeal { get; set; } = false;
+
     [RotationConfig(CombatType.PvE, Name = "Use Vercure for Dualcast when out of combat.")]
     public bool UseVercure { get; set; } = false;
 
@@ -460,4 +463,20 @@ public sealed class RDM_Reborn : RedMageRotation
         return base.GeneralGCD(out act);
     }
     #endregion
+
+    public override bool CanHealSingleSpell
+    {
+        get
+        {
+            int aliveHealerCount = 0;
+            IEnumerable<IBattleChara> healers = PartyMembers.GetJobCategory(JobRole.Healer);
+            foreach (IBattleChara h in healers)
+            {
+                if (!h.IsDead)
+                    aliveHealerCount++;
+            }
+
+            return base.CanHealSingleSpell && (GCDHeal || aliveHealerCount == 0);
+        }
+    }
 }

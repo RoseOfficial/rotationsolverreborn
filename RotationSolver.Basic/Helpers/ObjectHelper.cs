@@ -1,7 +1,6 @@
 ﻿using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Game.ClientState.Objects.SubKinds;
-using Dalamud.Game.ClientState.Objects.Types;
 using ECommons;
 using ECommons.DalamudServices;
 using ECommons.ExcelServices;
@@ -10,7 +9,6 @@ using ECommons.GameHelpers;
 using ECommons.Logging;
 using ExCSS;
 using FFXIVClientStructs.FFXIV.Client.Game;
-using FFXIVClientStructs.FFXIV.Client.Game.Character;
 using FFXIVClientStructs.FFXIV.Client.Game.Event;
 using FFXIVClientStructs.FFXIV.Common.Component.BGCollision;
 using Lumina.Excel.Sheets;
@@ -430,6 +428,21 @@ public static class ObjectHelper
             || ActionManager.CanUseActionOnTarget((uint)ActionID.CurePvE, (FFXIVClientStructs.FFXIV.Client.Game.Object.GameObject*)obj.Struct()));
     }
 
+    internal static unsafe bool CanBeRaised(this IBattleChara battleChara)
+    {
+        if (battleChara == null)
+            return false;
+        if (!battleChara.IsTargetable)
+            return false;
+
+        return ActionManager.CanUseActionOnTarget((uint)ActionID.RaisePvE, (FFXIVClientStructs.FFXIV.Client.Game.Object.GameObject*)battleChara.Struct());
+    }
+
+    internal static unsafe bool IsPlayer(this IBattleChara battleChara)
+    {
+        return battleChara == Player.Object;
+    }
+
     internal static bool IsParty(this IBattleChara battleChara)
     {
         if (battleChara == null)
@@ -518,47 +531,18 @@ public static class ObjectHelper
         return battleChara.TargetObject?.TargetObject == battleChara;
     }
 
-    internal static bool IsDeathToRaise(this IBattleChara battleChara)
-    {
-        if (battleChara == null)
-        {
-            return false;
-        }
-
-        if (!battleChara.IsDead || !battleChara.IsTargetable)
-        {
-            return false;
-        }
-
-        if (battleChara is IBattleChara b && b.CurrentHp != 0)
-        {
-            return false;
-        }
-
-        if (battleChara.HasStatus(false, StatusID.Raise))
-        {
-            return false;
-        }
-
-        if (!Service.Config.RaiseBrinkOfDeath && battleChara.HasStatus(false, StatusID.BrinkOfDeath))
-        {
-            return false;
-        }
-
-        foreach (IBattleChara c in DataCenter.PartyMembers)
-        {
-            if (c.CastTargetObjectId == battleChara.GameObjectId)
-            {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
     internal static bool IsAlive(this IBattleChara battleChara)
     {
-        return battleChara is not IBattleChara b || (b.CurrentHp > 0 && battleChara.IsTargetable);
+        if (battleChara == null)
+            return false;
+        if (battleChara.IsDead)
+            return false;
+        if (!battleChara.IsTargetable)
+            return false;
+        if (battleChara.CurrentHp == 0)
+            return false;
+
+        return true;
     }
 
     /// <summary>
@@ -639,6 +623,49 @@ public static class ObjectHelper
         if (Player.Job == Job.MCH && (battleChara.HasStatus(true, StatusID.Wildfire) || battleChara.HasStatus(true, StatusID.Wildfire_1323)))
         {
             return true;
+        }
+
+        if (Service.Config.PrioAtomelith && DataCenter.IsPvP)
+        {
+            var IceBoundTomeLithA1 = battleChara.NameId == 4822;
+            var IceBoundTomeLithA2 = battleChara.NameId == 4823;
+            var IceBoundTomeLithA3 = battleChara.NameId == 4824;
+            var IceBoundTomeLithA4 = battleChara.NameId == 4825;
+            if (IceBoundTomeLithA1 || IceBoundTomeLithA2 || IceBoundTomeLithA3 || IceBoundTomeLithA4)
+            {
+                return true;
+            }
+        }
+
+        if (Service.Config.PrioBtomelith && DataCenter.IsPvP)
+        {
+            var IceBoundTomeLithB1 = battleChara.NameId == 4826;
+            var IceBoundTomeLithB2 = battleChara.NameId == 4827;
+            var IceBoundTomeLithB3 = battleChara.NameId == 4828;
+            var IceBoundTomeLithB4 = battleChara.NameId == 4829;
+            var IceBoundTomeLithB5 = battleChara.NameId == 4830;
+            var IceBoundTomeLithB6 = battleChara.NameId == 4831;
+            var IceBoundTomeLithB7 = battleChara.NameId == 4832;
+            var IceBoundTomeLithB8 = battleChara.NameId == 4833;
+            var IceBoundTomeLithB9 = battleChara.NameId == 4834;
+            var IceBoundTomeLithB10 = battleChara.NameId == 4835;
+            var IceBoundTomeLithB11 = battleChara.NameId == 4836;
+            var IceBoundTomeLithB12 = battleChara.NameId == 4837;
+            var IceBoundTomeLithB13 = battleChara.NameId == 4840;
+            var IceBoundTomeLithB14 = battleChara.NameId == 4841;
+            var IceBoundTomeLithB15 = battleChara.NameId == 4842;
+            var IceBoundTomeLithB16 = battleChara.NameId == 4843;
+            var IceBoundTomeLithB17 = battleChara.NameId == 4844;
+            var IceBoundTomeLithB18 = battleChara.NameId == 4845;
+
+            if (IceBoundTomeLithB1 || IceBoundTomeLithB2 || IceBoundTomeLithB3 || IceBoundTomeLithB4 ||
+                IceBoundTomeLithB5 || IceBoundTomeLithB6 || IceBoundTomeLithB7 || IceBoundTomeLithB8 ||
+                IceBoundTomeLithB9 || IceBoundTomeLithB10 || IceBoundTomeLithB11 || IceBoundTomeLithB12 ||
+                IceBoundTomeLithB13 || IceBoundTomeLithB14 || IceBoundTomeLithB15 || IceBoundTomeLithB16 ||
+                IceBoundTomeLithB17 || IceBoundTomeLithB18)
+            {
+                return true;
+            }
         }
 
         // Ensure StatusList is not null before iterating
@@ -959,6 +986,38 @@ public static class ObjectHelper
         return battleChara.Struct()->NamePlateIconId;
     }
 
+    internal static int GetNameIconIdForBattleChara(this IBattleChara battleChara)
+    {
+        return 0;
+    }
+
+    /// <summary>
+    /// Is target a boss depends on the nameplateiconID.
+    /// </summary>
+    /// <param name="battleChara">the object.</param>
+    /// <returns></returns>
+    public static bool IsBossFromNameplateIcon(this IBattleChara battleChara)
+    {
+        if (battleChara == null)
+        {
+            return false;
+        }
+
+        if (Service.Config.DummyBoss && battleChara.IsDummy())
+        {
+            return true;
+        }
+
+        int icon = battleChara.GetNameIconIdForBattleChara();
+
+        if (icon == 61710 || icon == 61711 || icon == 61712)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
     internal static unsafe EventHandlerContent GetEventType(this IBattleChara battleChara)
     {
         return battleChara.Struct()->EventId.ContentId;
@@ -1035,7 +1094,8 @@ public static class ObjectHelper
     /// <returns>True if the target is immune due to any special mechanic; otherwise, false.</returns>
     public static bool IsSpecialImmune(this IBattleChara battleChara)
     {
-        return battleChara.IsWolfImmune()
+        return battleChara.IsDrakeImmune()
+            || battleChara.IsWolfImmune()
             || battleChara.IsSuperiorFlightUnitImmune()
             || battleChara.IsJeunoBossImmune()
             || battleChara.IsDeadStarImmune()
@@ -1045,6 +1105,77 @@ public static class ObjectHelper
             || battleChara.IsOmegaImmune()
             || battleChara.IsLimitlessBlue()
             || battleChara.IsHanselorGretelShielded();
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public static bool IsDrakeImmune(this IBattleChara battleChara)
+    {
+        if (DataCenter.TerritoryID == 1069)
+        {
+            var Drakefather = battleChara.NameId == 11463;
+            var Drakemother = battleChara.NameId == 11464;
+            var Drakebrother = battleChara.NameId == 11465;
+            var Drakesister = battleChara.NameId == 11466;
+            var Drakeling = battleChara.NameId == 11467;
+
+            bool DrakefatherAlive = false;
+            foreach (var obj in DataCenter.AllHostileTargets)
+            {
+                if (obj is IBattleChara x && x.NameId == 11463 && x.CurrentHp > 0)
+                {
+                    DrakefatherAlive = true;
+                    break;
+                }
+            }
+            bool DrakemotherAlive = false;
+            foreach (var obj in DataCenter.AllHostileTargets)
+            {
+                if (obj is IBattleChara x && x.NameId == 11464 && x.CurrentHp > 0)
+                {
+                    DrakemotherAlive = true;
+                    break;
+                }
+            }
+            bool DrakebrotherAlive = false;
+            foreach (var obj in DataCenter.AllHostileTargets)
+            {
+                if (obj is IBattleChara x && x.NameId == 11465 && x.CurrentHp > 0)
+                {
+                    DrakebrotherAlive = true;
+                    break;
+                }
+            }
+            bool DrakesisterAlive = false;
+            foreach (var obj in DataCenter.AllHostileTargets)
+            {
+                if (obj is IBattleChara x && x.NameId == 11466 && x.CurrentHp > 0)
+                {
+                    DrakesisterAlive = true;
+                    break;
+                }
+            }
+
+            if (Drakemother && DrakefatherAlive)
+            {
+                return true;
+            }
+            if (Drakebrother && DrakemotherAlive)
+            {
+                return true;
+            }
+            if (Drakesister && DrakebrotherAlive)
+            {
+                return true;
+            }
+            if (Drakeling && DrakesisterAlive)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /// <summary>
@@ -1515,7 +1646,7 @@ public static class ObjectHelper
             return false;
         }
 
-        if (battleChara.IsDummy())
+        if (Service.Config.DummyBoss && battleChara.IsDummy())
         {
             return true;
         }
@@ -1536,7 +1667,7 @@ public static class ObjectHelper
             return false;
         }
 
-        if (battleChara.IsDummy())
+        if (Service.Config.DummyBoss && battleChara.IsDummy())
         {
             return true;
         }

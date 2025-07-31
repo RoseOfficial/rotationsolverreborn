@@ -1,9 +1,9 @@
 namespace RebornRotations.Tank;
 
-[Rotation("Default", CombatType.PvE, GameVersion = "7.25")]
-[SourceCode(Path = "main/RebornRotations/Tank/DRK_Default.cs")]
+[Rotation("Reborn", CombatType.PvE, GameVersion = "7.25")]
+[SourceCode(Path = "main/RebornRotations/Tank/DRK_Reborn.cs")]
 [Api(5)]
-public sealed class DRK_Default : DarkKnightRotation
+public sealed class DRK_Reborn : DarkKnightRotation
 {
     #region Config Options
     [RotationConfig(CombatType.PvE, Name = "Keep at least 3000 MP")]

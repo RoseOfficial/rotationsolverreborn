@@ -19,6 +19,11 @@ internal static class ActionContextMenu
     //This is a Dalamud issue that I will need to fix and PR to them.
     private static void AddActionMenu(IMenuOpenedArgs args)
     {
+        if (DataCenter.Role == JobRole.DiscipleOfTheLand || DataCenter.Role == JobRole.DiscipleOfTheHand)
+        {
+            return;
+        }
+
         var contextAction = new BaseAction((ActionID)Svc.GameGui.HoveredAction.ActionID);
         Svc.GameGui.HoveredActionChanged += (sender, e) => { contextAction = new BaseAction((ActionID)Svc.GameGui.HoveredAction.ActionID); };
         Svc.GameGui.HoveredItemChanged += (sender, e) => { Svc.GameGui.HoveredAction.ActionID = 0; };

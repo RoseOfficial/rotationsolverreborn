@@ -16,9 +16,9 @@
       },
       "ECommons": {
         "type": "Direct",
-        "requested": "[3.0.0.4, )",
-        "resolved": "3.0.0.4",
-        "contentHash": "9SfGiyi/ro3iAfvskx+P2WMbAZkpHW0Wg2/XVpBznUuSwXJOlWDV8ekzfROIgfpCVuC+eUFNd3tPhFFl6vwjvQ=="
+        "requested": "[3.0.0.7, )",
+        "resolved": "3.0.0.7",
+        "contentHash": "edXivVZAexbdwT3tZx0HvVF6MHxdtKr0ct4SZxr0m6JF8N+OiJKKqp+osM+nVBA40yKex2UfxNiQys//x8v0VQ=="
       },
       "ExCSS": {
         "type": "Transitive",
@@ -92,7 +92,7 @@
       "RotationSolverReborn.Basic": {
         "type": "Project",
         "dependencies": {
-          "ECommons": "[3.0.0.4, )",
+          "ECommons": "[3.0.0.7, )",
           "RotationSolver.SourceGenerators": "[1.0.0, )",
           "Svg": "[3.4.7, )",
           "System.Drawing.Common": "[9.0.7, )"

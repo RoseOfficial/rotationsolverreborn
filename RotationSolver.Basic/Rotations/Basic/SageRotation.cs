@@ -105,6 +105,7 @@ public partial class SageRotation
     static partial void ModifyEgeiroPvE(ref ActionSetting setting)
     {
         setting.IsFriendly = true;
+        setting.ActionCheck = () => Player.CurrentMp >= RaiseMPMinimum;
     }
 
     static partial void ModifyPhysisPvE(ref ActionSetting setting)

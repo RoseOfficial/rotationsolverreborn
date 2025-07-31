@@ -1,5 +1,4 @@
 ﻿using ECommons.GameHelpers;
-using RotationSolver.Basic.Configuration;
 using RotationSolver.Basic.Configuration.Conditions;
 
 namespace RotationSolver.Updaters;

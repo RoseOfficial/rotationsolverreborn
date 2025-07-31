@@ -1,14 +1,22 @@
 namespace RebornRotations.Melee;
 
-[Rotation("Default", CombatType.PvE, GameVersion = "7.25")]
-[SourceCode(Path = "main/BasicRotations/Melee/DRG_Default.cs")]
+[Rotation("Reborn", CombatType.PvE, GameVersion = "7.25")]
+[SourceCode(Path = "main/RebornRotations/Melee/DRG_Reborn.cs")]
 [Api(5)]
 
-public sealed class DRG_Default : DragoonRotation
+public sealed class DRG_Reborn : DragoonRotation
 {
     #region Config Options
     [RotationConfig(CombatType.PvE, Name = "Use Doom Spike for damage uptime if out of melee range even if it breaks combo")]
     public bool DoomSpikeWhenever { get; set; } = true;
+
+    [Range(1, 20, ConfigUnitType.Yalms)]
+    [RotationConfig(CombatType.PvE, Name = "Max distance you need to be from the target for Stardiver useage")]
+    public float StardiverDistance { get; set; } = 20;
+
+    [Range(1, 20, ConfigUnitType.Yalms)]
+    [RotationConfig(CombatType.PvE, Name = "Max distance you need to be from the target for Dragonfire Dive useage")]
+    public float DragonfireDiveDistance { get; set; } = 20;
     #endregion
 
     private static bool InBurstStatus => Player.HasStatus(true, StatusID.BattleLitany);
@@ -71,7 +79,10 @@ public sealed class DRG_Default : DragoonRotation
         {
             if (StardiverPvE.CanUse(out act))
             {
-                return true;
+                if (StardiverPvE.Target.Target.DistanceToPlayer() <= StardiverDistance)
+                {
+                    return true;
+                }
             }
         }
 
@@ -155,7 +166,10 @@ public sealed class DRG_Default : DragoonRotation
         {
             if (DragonfireDivePvE.CanUse(out act))
             {
-                return true;
+                if (DragonfireDivePvE.Target.Target.DistanceToPlayer() <= DragonfireDiveDistance)
+                {
+                    return true;
+                }
             }
         }
 

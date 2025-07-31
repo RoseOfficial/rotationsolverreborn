@@ -2,10 +2,10 @@ using System.ComponentModel;
 
 namespace RebornRotations.Healer;
 
-[Rotation("Default", CombatType.PvE, GameVersion = "7.25")]
-[SourceCode(Path = "main/BasicRotations/Healer/AST_Default.cs")]
+[Rotation("Reborn", CombatType.PvE, GameVersion = "7.25")]
+[SourceCode(Path = "main/RebornRotations/Healer/AST_Reborn.cs")]
 [Api(5)]
-public sealed class AST_Default : AstrologianRotation
+public sealed class AST_Reborn : AstrologianRotation
 {
     #region Config Options
     [RotationConfig(CombatType.PvE, Name = "Enable Swiftcast Restriction Logic to attempt to prevent actions other than Raise when you have swiftcast")]
@@ -34,7 +34,7 @@ public sealed class AST_Default : AstrologianRotation
 
     [Range(4, 20, ConfigUnitType.Seconds)]
     [RotationConfig(CombatType.PvE, Name = "Use Earthly Star during countdown timer.")]
-    public float UseEarthlyStarTime { get; set; } = 15;
+    public float UseEarthlyStarTime { get; set; } = 4;
 
     [Range(0, 1, ConfigUnitType.Percent)]
     [RotationConfig(CombatType.PvE, Name = "Minimum HP threshold party member needs to be to use Aspected Benefic")]

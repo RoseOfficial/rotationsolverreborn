@@ -57,7 +57,7 @@ https://github.com/FFXIV-CombatReborn/RotationSolverReborn/releases/tag/7.1.6.9
 https://github.com/FFXIV-CombatReborn/RotationSolverReborn/releases/tag/7.1.8.1
 
 7.20
-https://github.com/FFXIV-CombatReborn/RotationSolverReborn/releases/tag/7.2.0.39
+https://github.com/FFXIV-CombatReborn/RotationSolverReborn/releases/tag/7.2.0.40
 
 7.21
 https://github.com/FFXIV-CombatReborn/RotationSolverReborn/releases/tag/7.2.1.65

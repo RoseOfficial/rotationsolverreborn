@@ -118,6 +118,7 @@ public partial class ScholarRotation
     static partial void ModifyResurrectionPvE(ref ActionSetting setting)
     {
         setting.IsFriendly = true;
+        setting.ActionCheck = () => Player.CurrentMp >= RaiseMPMinimum;
     }
 
     static partial void ModifyWhisperingDawnPvE_16537(ref ActionSetting setting)

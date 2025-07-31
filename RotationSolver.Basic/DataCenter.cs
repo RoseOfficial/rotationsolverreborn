@@ -484,6 +484,28 @@ internal static class DataCenter
     #region Job Info
     public static Job Job => Player.Job;
 
+    public static bool CanRaise()
+    {
+        if (IsPvP)
+        {
+            return false;
+        }
+
+        if ((Role == JobRole.Healer || Job == Job.SMN) && Player.Level >= 12)
+        {
+            return true;
+        }
+        if (Job == Job.RDM && Player.Level >= 64)
+        {
+            return true;
+        }
+        if (DutyRotation.ChemistLevel >= 3)
+        {
+            return true;
+        }
+        return false;
+    }
+
     public static JobRole Role
     {
         get
@@ -503,7 +525,7 @@ internal static class DataCenter
                 return radius;
             }
 
-            switch (DataCenter.Role)
+            switch (Role)
             {
                 case JobRole.Tank:
                 case JobRole.Melee:

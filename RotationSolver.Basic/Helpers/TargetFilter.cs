@@ -20,9 +20,15 @@ public static class TargetFilter
 
         foreach (IBattleChara item in charas)
         {
-            if (item == null || !item.IsDead || item.CurrentHp != 0 || !item.IsTargetable || item.IsTargetMoving() || item.IsEnemy())
+            if (item == null)
+                continue;
+            if (!item.IsDead)
+                continue;
+            if (item.CurrentHp != 0 || !item.IsTargetable || item.IsTargetMoving() || item.IsEnemy())
                 continue;
             if (!item.IsParty() && !item.IsAllianceMember())
+                continue;
+            if (item.DistanceToPlayer() > 30)
                 continue;
             if (!item.CanSee())
                 continue;
@@ -31,6 +37,8 @@ public static class TargetFilter
             if (item.HasStatus(false, StatusID.ResurrectionDenied))
                 continue;
             if (!Service.Config.RaiseBrinkOfDeath && item.HasStatus(false, StatusID.BrinkOfDeath))
+                continue;
+            if (!item.CanBeRaised())
                 continue;
             yield return item;
         }
