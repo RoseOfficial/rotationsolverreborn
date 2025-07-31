@@ -1,7 +1,7 @@
 ﻿namespace RebornRotations.Melee;
 
-[Rotation("Rework", CombatType.PvE, GameVersion = "7.25")]
-[SourceCode(Path = "main/BasicRotations/Melee/RPR_Reborn.cs")]
+[Rotation("Reborn", CombatType.PvE, GameVersion = "7.25")]
+[SourceCode(Path = "main/RebornRotations/Melee/RPR_Reborn.cs")]
 [Api(5)]
 public sealed class RPR_Reborn : ReaperRotation
 {

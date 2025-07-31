@@ -107,6 +107,7 @@ public partial class AstrologianRotation
         ImGui.Text($"DrawnCard: {string.Join(", ", DrawnCard)}");
         ImGui.Text($"DrawnCrownCard: {DrawnCrownCard}");
         ImGui.Text($"ActiveDraw: {ActiveDraw}");
+        ImGui.Text($"RaiseMPMinimum: {RaiseMPMinimum}");
     }
     #endregion
 
@@ -158,6 +159,7 @@ public partial class AstrologianRotation
     static partial void ModifyAscendPvE(ref ActionSetting setting)
     {
         setting.IsFriendly = true;
+        setting.ActionCheck = () => Player.CurrentMp >= RaiseMPMinimum;
     }
 
     static partial void ModifyEssentialDignityPvE(ref ActionSetting setting)

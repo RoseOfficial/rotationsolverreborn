@@ -1,9 +1,11 @@
-﻿namespace RebornRotations.Melee;
+﻿using Dalamud.Interface.Colors;
 
-[Rotation("Default", CombatType.PvE, GameVersion = "7.25")]
-[SourceCode(Path = "main/BasicRotations/Melee/VPR_Default.cs")]
+namespace RebornRotations.Melee;
+
+[Rotation("Reborn", CombatType.PvE, GameVersion = "7.25")]
+[SourceCode(Path = "main/RebornRotations/Melee/VPR_Reborn.cs")]
 [Api(5)]
-public sealed class VPR_Default : ViperRotation
+public sealed class VPR_Reborn : ViperRotation
 {
     #region Config Options
 
@@ -40,6 +42,22 @@ public sealed class VPR_Default : ViperRotation
 
     [RotationConfig(CombatType.PvE, Name = "Attempt to prevent regular combo from dropping (Experimental)")]
     public bool PreserveCombo { get; set; } = false;
+
+    [RotationConfig(CombatType.PvE, Name = "Only allow switching from ST to AOE rotation if your last combo action increased gauge (Experimental)")]
+    public bool STtoAOEBetaLogic { get; set; } = false;
+
+    [RotationConfig(CombatType.PvE, Name = "Only allow switching from AOE to ST rotation if your last combo action increased gauge (Experimental)")]
+    public bool AOEtoSTBetaLogic { get; set; } = false;
+    #endregion
+
+    #region Tracking Properties
+    public override void DisplayStatus()
+    {
+        ImGui.TextColored(ImGuiColors.DalamudViolet, "Rotation Tracking:");
+        ImGui.Text($"No Last Combo Action: {IsNoActionCombo()}");
+        ImGui.TextColored(ImGuiColors.DalamudYellow, "Base Tracking:");
+        base.DisplayStatus();
+    }
     #endregion
 
     #region Additional oGCD Logic
@@ -218,9 +236,23 @@ public sealed class VPR_Default : ViperRotation
 
     protected override bool AttackAbility(IAction nextGCD, out IAction? act)
     {
-        if (SerpentsIrePvE.CanUse(out act))
+        if (IsBurst)
         {
-            return true;
+            if (!SerpentsLineageTrait.EnoughLevel)
+            {
+                if (SerpentsIrePvE.CanUse(out act))
+                {
+                    return true;
+                }
+            }
+
+            if (SerpentsLineageTrait.EnoughLevel && ReawakenPvE.IsEnabled)
+            {
+                if (SerpentsIrePvE.CanUse(out act))
+                {
+                    return true;
+                }
+            }
         }
 
         return base.AttackAbility(nextGCD, out act);
@@ -268,7 +300,7 @@ public sealed class VPR_Default : ViperRotation
             && SwiftTime > SwiftTimer && HuntersTime > HuntersTimer)
         {
             // If all above conditions are met, attempt to use Reawaken.
-            if (ReawakenPvE.CanUse(out act, skipComboCheck: true))
+            if (IsBurst && ReawakenPvE.CanUse(out act, skipComboCheck: true))
             {
                 return true;
             }
@@ -463,23 +495,25 @@ public sealed class VPR_Default : ViperRotation
             if (HuntersBitePvE.CanUse(out act, skipStatusProvideCheck: true, skipComboCheck: true))
                 return true;
         }
-        // aoe 1
-        switch ((HasSteel, HasReavers))
+        if (!STtoAOEBetaLogic || (STtoAOEBetaLogic && (!FlankstingStrikePvE.EnoughLevel || IsNoActionCombo() || IsLastComboAction(ActionID.FlankstingStrikePvE, ActionID.FlanksbaneFangPvE, ActionID.HindsbaneFangPvE, ActionID.HindstingStrikePvE, ActionID.JaggedMawPvE, ActionID.BloodiedMawPvE))))
         {
-            case (true, _):
-                if (SteelMawPvE.CanUse(out act))
-                    return true;
-                break;
-            case (_, true):
-                if (ReavingMawPvE.CanUse(out act))
-                    return true;
-                break;
-            case (false, false):
-                if (ReavingMawPvE.CanUse(out act))
-                    return true;
-                if (SteelMawPvE.CanUse(out act))
-                    return true;
-                break;
+            switch ((HasSteel, HasReavers))
+            {
+                case (true, _):
+                    if (SteelMawPvE.CanUse(out act))
+                        return true;
+                    break;
+                case (_, true):
+                    if (ReavingMawPvE.CanUse(out act))
+                        return true;
+                    break;
+                case (false, false):
+                    if (ReavingMawPvE.CanUse(out act))
+                        return true;
+                    if (SteelMawPvE.CanUse(out act))
+                        return true;
+                    break;
+            }
         }
 
         ////Single Target Dread Combo
@@ -714,22 +748,25 @@ public sealed class VPR_Default : ViperRotation
         }
 
         // st 1
-        switch ((HasSteel, HasReavers))
+        if (!AOEtoSTBetaLogic || (AOEtoSTBetaLogic && (!JaggedMawPvE.EnoughLevel || IsNoActionCombo() || IsLastComboAction(ActionID.FlankstingStrikePvE, ActionID.FlanksbaneFangPvE, ActionID.HindsbaneFangPvE, ActionID.HindstingStrikePvE, ActionID.JaggedMawPvE, ActionID.BloodiedMawPvE))))
         {
-            case (true, _):
-                if (SteelFangsPvE.CanUse(out act))
-                    return true;
-                break;
-            case (_, true):
-                if (ReavingFangsPvE.CanUse(out act))
-                    return true;
-                break;
-            case (false, false):
-                if (ReavingFangsPvE.CanUse(out act))
-                    return true;
-                if (SteelFangsPvE.CanUse(out act))
-                    return true;
-                break;
+            switch ((HasSteel, HasReavers))
+            {
+                case (true, _):
+                    if (SteelFangsPvE.CanUse(out act))
+                        return true;
+                    break;
+                case (_, true):
+                    if (ReavingFangsPvE.CanUse(out act))
+                        return true;
+                    break;
+                case (false, false):
+                    if (ReavingFangsPvE.CanUse(out act))
+                        return true;
+                    if (SteelFangsPvE.CanUse(out act))
+                        return true;
+                    break;
+            }
         }
 
         //Ranged

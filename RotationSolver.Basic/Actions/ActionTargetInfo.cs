@@ -82,7 +82,7 @@ public struct ActionTargetInfo(IBaseAction action)
                 // or the target is the currently selected hard-target
                 // or the target is ourselves
                 // then => Check target is in the view && ActionManager.CanUse on target && CanSee Target && action.setting predicate is true of target
-                if (!DataCenter.IsManual || IsTargetFriendly || target.GameObjectId == Svc.Targets.Target?.GameObjectId || target.GameObjectId == Player.Object?.GameObjectId)
+                if (!DataCenter.IsManual || IsTargetFriendly || target.GameObjectId == Svc.Targets.Target?.GameObjectId || target.GameObjectId == Player.Object.GameObjectId)
                 {
                     var view = InViewTarget(target);
                     var canUse = CanUseTo(target);
@@ -1029,15 +1029,10 @@ public struct ActionTargetInfo(IBaseAction action)
         {
             case TargetType.Death:
                 {
-                    var filtered = new List<IBattleChara>();
-                    foreach (var t in battleChara)
+                    if (DataCenter.DeathTarget != null)
                     {
-                        if (ObjectHelper.IsDeathToRaise(t))
-                        {
-                            filtered.Add(t);
-                        }
+                        return DataCenter.DeathTarget;
                     }
-                    battleChara = filtered;
                 }
                 break;
 
@@ -1065,7 +1060,6 @@ public struct ActionTargetInfo(IBaseAction action)
             TargetType.BeAttacked => FindBeAttackedTarget(),
             TargetType.Provoke => FindProvokeTarget(),
             TargetType.Dispel => FindDispelTarget(),
-            TargetType.Death => FindDeathPeople(),
             TargetType.Move => FindTargetForMoving(),
             TargetType.Heal => FindHealTarget(healRatio),
             TargetType.Interrupt => FindInterruptTarget(),
@@ -1511,23 +1505,6 @@ public struct ActionTargetInfo(IBaseAction action)
             return null;
         }
 
-        IBattleChara? FindDeathPeople()
-        {
-            if (battleChara == null || DataCenter.DeathTarget == null)
-            {
-                return null;
-            }
-
-            foreach (var o in battleChara)
-            {
-                if (o.GameObjectId == DataCenter.DeathTarget.GameObjectId)
-                {
-                    return DataCenter.DeathTarget;
-                }
-            }
-            return null;
-        }
-
         IBattleChara? FindTargetForMoving()
         {
             return Service.Config == null || battleChara == null
@@ -1541,7 +1518,7 @@ public struct ActionTargetInfo(IBaseAction action)
                     return null;
                 }
 
-                List<IBattleChara> filteredTargets = new();
+                List<IBattleChara> filteredTargets = [];
                 foreach (var t in battleChara)
                 {
                     if (t.DistanceToPlayer() > Service.Config.DistanceForMoving)
@@ -1572,7 +1549,7 @@ public struct ActionTargetInfo(IBaseAction action)
                 Vector3 pPosition = Player.Object.Position;
                 Vector3 faceVec = Player.Object.GetFaceVector();
 
-                List<IBattleChara> filteredTargets = new();
+                List<IBattleChara> filteredTargets = [];
                 foreach (var t in battleChara)
                 {
                     if (t.DistanceToPlayer() > Service.Config.DistanceForMoving)
@@ -2034,7 +2011,6 @@ public struct ActionTargetInfo(IBaseAction action)
                 return null;
             }
 
-            // Manual Any() check
             bool hasAny = false;
             foreach (var _ in battleChara)
             {
@@ -2046,7 +2022,6 @@ public struct ActionTargetInfo(IBaseAction action)
                 return null;
             }
 
-            // attachedT = IGameObjects.Where(ObjectHelper.IsTargetOnSelf)
             List<IBattleChara> attachedT = [];
             foreach (var t in battleChara)
             {
@@ -2241,7 +2216,7 @@ public struct ActionTargetInfo(IBaseAction action)
 
     private static IBattleChara? RandomObject(IEnumerable<IBattleChara> objs)
     {
-        return objs.Count() > 0 ? objs.ElementAt(new Random().Next(objs.Count())) : null;
+        return objs.Any() ? objs.ElementAt(new Random().Next(objs.Count())) : null;
         //Random ran = new(DateTime.Now.Millisecond);
         //var count = objs.Count();
         //if (count == 0) return null;

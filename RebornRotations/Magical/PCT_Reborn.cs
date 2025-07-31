@@ -1,9 +1,9 @@
 ﻿namespace RebornRotations.Magical;
 
-[Rotation("Default", CombatType.PvE, GameVersion = "7.25")]
-[SourceCode(Path = "main/BasicRotations/Magical/PCT_Default.cs")]
+[Rotation("Reborn", CombatType.PvE, GameVersion = "7.25")]
+[SourceCode(Path = "main/RebornRotations/Magical/PCT_Reborn.cs")]
 [Api(5)]
-public sealed class PCT_Default : PictomancerRotation
+public sealed class PCT_Reborn : PictomancerRotation
 {
     #region Config Options
     [RotationConfig(CombatType.PvE, Name = "Use HolyInWhite or CometInBlack while moving")]

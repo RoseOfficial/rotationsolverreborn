@@ -135,20 +135,20 @@ public partial class CustomRotation
     {
         act = null; // Ensure 'act' is assigned before any return
 
-        IBaseAction.TargetOverride = TargetType.Death;
-
+        IBaseAction.TargetOverride = TargetType.Dispel;
         ActionDispelStancePositionalGCD = role switch
         {
             JobRole.Healer => DataCenter.DispelTarget != null && DispelGCD(out act) ? act : null,
             _ => null,
         };
+        IBaseAction.TargetOverride = null;
 
+        IBaseAction.TargetOverride = TargetType.Death;
         ActionRaiseShirkGCD = role switch
         {
             JobRole.Healer => DataCenter.DeathTarget != null && RaiseSpell(out act, true) ? act : null,
             _ => null,
         };
-
         IBaseAction.TargetOverride = null;
     }
 

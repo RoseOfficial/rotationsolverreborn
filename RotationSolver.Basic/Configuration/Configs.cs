@@ -86,11 +86,6 @@ internal partial class Configs : IPluginConfiguration
     Filter = BasicAutoSwitch)]
     private static readonly bool _autoOffWhenDutyCompleted = true;
 
-    [ConditionBool, UI("Use movement actions towards the object/mob in the center of the screen",
-    Description = "If enabled, movement actions target the object or mob at the center of your screen. If disabled, they target the object or mob your character is facing.",
-    Filter = TargetConfig, Section = 2)]
-    private static readonly bool _moveTowardsScreenCenter = false;
-
     [ConditionBool, UI("Enable changelog window popup on update",
     Description = "Show a popup window with the changelog when the plugin updates.",
     Filter = UiInformation)]
@@ -144,39 +139,10 @@ internal partial class Configs : IPluginConfiguration
     Filter = AutoActionUsage)]
     private static readonly bool _useMpPotions = false;
 
-    [ConditionBool, UI("Prioritize mob/object targets with attack markers",
-    Description = "Targets with attack markers will be prioritized for actions.",
-    Filter = TargetConfig)]
-    private static readonly bool _chooseAttackMark = true;
-
-    [ConditionBool, UI("Prioritize enemy parts",
-    Description = "Enemy parts, such as Titan's Heart, will be prioritized as targets.",
-    Filter = TargetConfig)]
-    private static readonly bool _prioEnemyParts = true;
-
     [ConditionBool, UI("Allow the use of AOEs against priority-marked targets.",
     Description = "Enable to allow AoE actions to hit targets with priority markers.",
     Parent = nameof(ChooseAttackMark))]
     private static readonly bool _canAttackMarkAOE = true;
-
-    [ConditionBool, UI("Never attack targets with stop markers.",
-    Description = "Targets with stop markers will not be attacked.",
-    Filter = TargetConfig)]
-    private static readonly bool _filterStopMark = true;
-
-    [ConditionBool, UI("Treat 1hp targets as invincible.",
-    Description = "Targets with only 1 HP will be treated as invincible and ignored; for rare cases where target is invincible but is not given a status for it.",
-    Filter = TargetConfig)]
-    private static readonly bool _filterOneHPInvincible = true;
-
-    [ConditionBool, UI("Ignore Non-Fate targets while in a Fate and Fate targets if not in Fate.",
-    Description = "When in a Fate, only Fate targets are considered. When not in a Fate, Fate targets are ignored.",
-    Filter = TargetConfig)]
-    private static readonly bool _ignoreNonFateInFate = true;
-
-    [ConditionBool, UI("Prevent targeting invalid targets in Bozjan Southern Front and Zadnor",
-        Filter = TargetConfig)]
-    private static readonly bool _bozjaCEmobtargeting = false;
 
     [ConditionBool, UI("Teaching mode", Filter = UiInformation)]
     private static readonly bool _teachingMode = false;
@@ -184,10 +150,6 @@ internal partial class Configs : IPluginConfiguration
     [ConditionBool, UI("Simulate the effect of pressing abilities",
         Filter = UiInformation)]
     private static readonly bool _keyBoardNoise = true;
-
-    [ConditionBool, UI("Move to the furthest position for targeting area movement actions.",
-        Filter = TargetConfig, Section = 2)]
-    private static readonly bool _moveAreaActionFarthest = false;
 
     [ConditionBool, UI("Activate auto mode when countdown starts",
         Filter = BasicAutoSwitch, Section = 1)]
@@ -213,10 +175,6 @@ internal partial class Configs : IPluginConfiguration
         PvEFilter = JobFilterType.NoHealer, PvPFilter = JobFilterType.NoJob)]
     private static readonly bool _useHealWhenNotAHealer = true;
 
-    [ConditionBool, UI("Hard Target enemies for hostile actions", Description = "If this is disabled, RSR will only soft-target allies for heals, shields, etc.",
-        Filter = TargetConfig, Section = 3)]
-    private static readonly bool _switchTargetFriendly = false;
-
     [JobConfig, UI("Use interrupt abilities if possible.",
         Filter = AutoActionUsage, Section = 3,
         PvEFilter = JobFilterType.Interrupt,
@@ -238,14 +196,6 @@ internal partial class Configs : IPluginConfiguration
         Filter = AutoActionUsage, Section = 3,
         PvEFilter = JobFilterType.Dispel, PvPFilter = JobFilterType.NoJob)]
     private static readonly bool _dispelAll = false;
-
-    [ConditionBool, UI("Only attack targets in view.",
-        Filter = TargetConfig, Section = 1)]
-    private static readonly bool _onlyAttackInView = false;
-
-    [ConditionBool, UI("Only attack targets in vision cone",
-                Filter = TargetConfig, Section = 1)]
-    private static readonly bool _onlyAttackInVisionCone = false;
 
     [ConditionBool, UI("Debug Mode", Filter = Debug)]
     private static readonly bool _inDebug = false;
@@ -312,26 +262,6 @@ internal partial class Configs : IPluginConfiguration
     [ConditionBool, UI("Show tooltips",
         Filter = UiInformation)]
     private static readonly bool _showTooltips = true;
-
-    [ConditionBool, UI("Target Hunt/Relic/Leve priority. (Relic behavior bugged)",
-        Filter = TargetConfig, Section = 1)]
-    private static readonly bool _targetHuntingRelicLevePriority = true;
-
-    [ConditionBool, UI("Target quest priority (Overrides engage setting).",
-        Filter = TargetConfig, Section = 1)]
-    private static readonly bool _targetQuestPriority = true;
-
-    [ConditionBool, UI("Block targeting quest mobs belonging to other players (Broken).",
-        Filter = TargetConfig, Section = 1)]
-    private static readonly bool targetQuestThings = true;
-
-    [ConditionBool, UI("Ignore all other FATE target when Forlorn available (Experimental).",
-        Filter = TargetConfig, Section = 1)]
-    private static readonly bool forlornPriority = true;
-
-    [ConditionBool, UI("Ignore target dummies",
-               Filter = TargetConfig, Section = 1)]
-    private static readonly bool _disableTargetDummys = false;
 
     [ConditionBool, UI("Display do action feedback on toast",
         Filter = UiInformation)]
@@ -406,10 +336,6 @@ internal partial class Configs : IPluginConfiguration
 
     [ConditionBool, UI("Record AOE actions", Filter = List)]
     private static readonly bool _recordCastingArea = true;
-
-    [ConditionBool, UI("Target Fate priority",
-        Filter = TargetConfig, Section = 1)]
-    private static readonly bool _targetFatePriority = true;
 
     [ConditionBool, UI("Auto turn off RSR when combat is over for more than:",
         Filter = BasicAutoSwitch)]
@@ -500,7 +426,18 @@ internal partial class Configs : IPluginConfiguration
     [Range(0, 1, ConfigUnitType.Percent, 0.02f)]
     public float HealthSelfRatio { get; set; } = 0.4f;
 
-    [JobConfig, UI("Hard cast Raise while Swiftcast/Dualcast is on cooldown", Description = "If this is enabled and Swiftcast/Dualcast is on cooldown, you will only attempt to raise while standing still.",
+    #region
+    [JobConfig, UI("Hard cast Raise while Swiftcast is on cooldown if Swiftcast cooldown is higher than Raise cast time (Experimental)",
+        Filter = HealingActionCondition, Section = 2,
+        PvEFilter = JobFilterType.Raise, PvPFilter = JobFilterType.NoJob)]
+    private static readonly bool _raiseSwiftCooldown = false;
+
+    [JobConfig, UI("Hard cast Raise while Swiftcast is on cooldown if all other healers are dead (Experimental)",
+        Filter = HealingActionCondition, Section = 2,
+        PvEFilter = JobFilterType.Raise, PvPFilter = JobFilterType.NoJob)]
+    private static readonly bool _raiseHealerByCasting = false;
+
+    [JobConfig, UI("Hard cast Raise while Swiftcast is on cooldown",
         Filter = HealingActionCondition, Section = 2,
         PvEFilter = JobFilterType.Raise, PvPFilter = JobFilterType.NoJob)]
     private static readonly bool _raisePlayerByCasting = true;
@@ -530,6 +467,8 @@ internal partial class Configs : IPluginConfiguration
         Filter = HealingActionCondition, Section = 2)]
     private static readonly bool _offRaiserRaise = false;
 
+    #endregion
+
     /// <markdown file="Auto" name="How early before next GCD should RSR use swiftcast for raise" section="Healing Usage and Control">
     /// If your cast a GCD and your cooldown is of 2.5 seconds, if a teammate dies when your cooldown starts, the Swiftcast action will wait
     /// the specified amount of time before your cooldown ends to cast Swiftcast. This is to prevent using your Swiftcast too early and waste it
@@ -549,7 +488,7 @@ internal partial class Configs : IPluginConfiguration
         Filter = HealingActionCondition, Section = 2,
         PvEFilter = JobFilterType.Raise, PvPFilter = JobFilterType.NoJob)]
     [Range(0, 10, ConfigUnitType.Seconds, 0.002f)]
-    public Vector2 RaiseDelay { get; set; } = new(0f, 0f);
+    public Vector2 RaiseDelay2 { get; set; } = new(3f, 3f);
 
     [UI("Random delay range for dispelling statuses.",
         Filter = HealingActionCondition, Section = 2,
@@ -557,11 +496,11 @@ internal partial class Configs : IPluginConfiguration
     [Range(0, 10, ConfigUnitType.Seconds, 0.002f)]
     public Vector2 EsunaDelay { get; set; } = new(0f, 0f);
 
-    [Range(0, 10000, ConfigUnitType.None, 200)]
+    [Range(0, 10000, ConfigUnitType.None, 100)]
     [UI("Never raise player if MP is less than this",
         Filter = HealingActionCondition, Section = 2,
-        PvEFilter = JobFilterType.Raise)]
-    public int LessMPNoRaise { get; set; }
+        PvEFilter = JobFilterType.Raise, PvPFilter = JobFilterType.NoJob)]
+    public int LessMPNoRaise { get; set; } = 2400;
 
     /// <markdown file="Extra" name="HP standard deviation for using AoE heal">
     /// Controls how much party members' HP must differ before using AoE healing instead
@@ -611,10 +550,6 @@ internal partial class Configs : IPluginConfiguration
         Filter = BasicTimer, Section = 1)]
     [Range(1, 20, ConfigUnitType.Seconds, 1f)]
     public float SpecialDuration { get; set; } = 3;
-
-    [UI("Range of time before locking onto aggro'd or new target to attack", Description = "(Do not set too low, can rip newly aggro'd dungeon mobs off tanks).", Filter = TargetConfig)]
-    [Range(0, 3, ConfigUnitType.Seconds)]
-    public Vector2 TargetDelay { get; set; } = new(1, 2);
 
     /// <markdown file="Basic" name="Action Execution Delay">
     /// Random time in seconds to wait before RSR can take another action.
@@ -666,27 +601,6 @@ internal partial class Configs : IPluginConfiguration
     [Range(0, 0.7f, ConfigUnitType.Seconds, 0.002f)]
     public float CountDownAhead { get; set; } = 0.4f;
 
-    [UI("The size of the sector angle that can be selected as the moveable target",
-        Description = "If the selection mode is based on character facing, i.e., targets within the character's viewpoint are moveable targets.\nIf the selection mode is screen-centered, i.e., targets within a sector drawn upward from the character's point are movable targets.",
-        Filter = TargetConfig, Section = 2)]
-    [Range(0, 90, ConfigUnitType.Degree, 0.02f)]
-    public float MoveTargetAngle { get; set; } = 24;
-
-    [UI("If target's TTK is higher than this, regard it as boss.",
-        Filter = TargetConfig, Section = 1)]
-    [Range(10, 1800, ConfigUnitType.Seconds, 0.02f)]
-    public float BossTimeToKill { get; set; } = 90;
-
-    [UI("If target's TTK is lower than this, regard it as dying.",
-                Filter = TargetConfig, Section = 1)]
-    [Range(0, 60, ConfigUnitType.Seconds, 0.02f)]
-    public float DyingTimeToKill { get; set; } = 10;
-
-    [UI("If target's HP percentage is lower than this, regard it as dying.",
-                Filter = TargetConfig, Section = 1)]
-    [Range(0, 0.1f, ConfigUnitType.Percent, 0.01f)]
-    public float IsDyingConfig { get; set; } = 0.02f;
-
     [UI("Cooldown window icon size")]
     [Range(0, 80, ConfigUnitType.Pixels, 0.2f)]
     public float CooldownWindowIconSize { get; set; } = 30;
@@ -706,11 +620,6 @@ internal partial class Configs : IPluginConfiguration
     [UI("Control Progress Height")]
     [Range(2, 30, ConfigUnitType.Yalms)]
     public float ControlProgressHeight { get; set; } = 8;
-
-    [UI("Use gapcloser as a damage ability if the distance to your target is less than this.",
-        Filter = TargetConfig, Section = 2)]
-    [Range(0, 30, ConfigUnitType.Yalms, 1f)]
-    public float DistanceForMoving { get; set; } = 1.2f;
 
     [UI("Stop healing when time to kill is lower than:", Parent = nameof(UseHealWhenNotAHealer))]
     [Range(0, 30, ConfigUnitType.Seconds, 0.02f)]
@@ -753,6 +662,130 @@ internal partial class Configs : IPluginConfiguration
     public Vector4 InfoWindowBg { get; set; } = new(0, 0, 0, 0.4f);
     #endregion
 
+    #region Target
+    [ConditionBool, UI("Use movement actions towards the object/mob in the center of the screen",
+    Description = "If enabled, movement actions target the object or mob at the center of your screen. If disabled, they target the object or mob your character is facing.",
+    Filter = TargetConfig, Section = 2)]
+    private static readonly bool _moveTowardsScreenCenter = false;
+
+    [ConditionBool, UI("Prioritize mob/object targets with attack markers",
+    Description = "Targets with attack markers will be prioritized for actions.",
+    Filter = TargetConfig)]
+    private static readonly bool _chooseAttackMark = true;
+
+    [ConditionBool, UI("Prioritize enemy parts",
+    Description = "Enemy parts, such as Titan's Heart, will be prioritized as targets.",
+    Filter = TargetConfig)]
+    private static readonly bool _prioEnemyParts = true;
+
+    [ConditionBool, UI("Never attack targets with stop markers.",
+    Description = "Targets with stop markers will not be attacked.",
+    Filter = TargetConfig)]
+    private static readonly bool _filterStopMark = true;
+
+    [ConditionBool, UI("Treat 1hp targets as invincible.",
+    Description = "Targets with only 1 HP will be treated as invincible and ignored; for rare cases where target is invincible but is not given a status for it.",
+    Filter = TargetConfig)]
+    private static readonly bool _filterOneHPInvincible = true;
+
+    [ConditionBool, UI("Ignore Non-Fate targets while in a Fate and Fate targets if not in Fate.",
+    Description = "When in a Fate, only Fate targets are considered. When not in a Fate, Fate targets are ignored.",
+    Filter = TargetConfig)]
+    private static readonly bool _ignoreNonFateInFate = true;
+
+    [ConditionBool, UI("Prevent targeting invalid targets in Bozjan Southern Front and Zadnor",
+        Filter = TargetConfig)]
+    private static readonly bool _bozjaCEmobtargeting = false;
+
+    [ConditionBool, UI("Move to the furthest position for targeting area movement actions.",
+        Filter = TargetConfig, Section = 2)]
+    private static readonly bool _moveAreaActionFarthest = false;
+
+    [ConditionBool, UI("Hard Target enemies for hostile actions", Description = "If this is disabled, RSR will only soft-target allies for heals, shields, etc.",
+        Filter = TargetConfig, Section = 3)]
+    private static readonly bool _switchTargetFriendly = false;
+
+    [ConditionBool, UI("Set target to closest targetable enemy if no valid action target nearby and target not set",
+        Filter = TargetConfig, Section = 3)]
+    private static readonly bool _targetFreely = false;
+
+    [ConditionBool, UI("Only attack targets in view.",
+        Filter = TargetConfig, Section = 1)]
+    private static readonly bool _onlyAttackInView = false;
+
+    [ConditionBool, UI("Only attack targets in vision cone",
+                Filter = TargetConfig, Section = 1)]
+    private static readonly bool _onlyAttackInVisionCone = false;
+
+    [ConditionBool, UI("Target Hunt/Relic/Leve priority. (Relic behavior bugged)",
+        Filter = TargetConfig, Section = 1)]
+    private static readonly bool _targetHuntingRelicLevePriority = true;
+
+    [ConditionBool, UI("Target quest priority (Overrides engage setting).",
+        Filter = TargetConfig, Section = 1)]
+    private static readonly bool _targetQuestPriority = true;
+
+    [ConditionBool, UI("Block targeting quest mobs belonging to other players (Broken).",
+        Filter = TargetConfig, Section = 1)]
+    private static readonly bool targetQuestThings = true;
+
+    [ConditionBool, UI("Ignore all other FATE target when Forlorn available (Experimental).",
+        Filter = TargetConfig, Section = 1)]
+    private static readonly bool forlornPriority = true;
+
+    [ConditionBool, UI("Ignore target dummies",
+               Filter = TargetConfig, Section = 1)]
+    private static readonly bool _disableTargetDummys = false;
+
+    [ConditionBool, UI("Target Fate priority",
+        Filter = TargetConfig, Section = 1)]
+    private static readonly bool _targetFatePriority = true;
+
+    [UI("Range of time before locking onto aggro'd or new target to attack", Description = "(Do not set too low, can rip newly aggro'd dungeon mobs off tanks).",
+        Filter = TargetConfig)]
+    [Range(0, 3, ConfigUnitType.Seconds)]
+    public Vector2 TargetDelay { get; set; } = new(1, 2);
+
+    [UI("The size of the sector angle that can be selected as the moveable target",
+        Description = "If the selection mode is based on character facing, i.e., targets within the character's viewpoint are moveable targets.\nIf the selection mode is screen-centered, i.e., targets within a sector drawn upward from the character's point are movable targets.",
+        Filter = TargetConfig, Section = 2)]
+    [Range(0, 90, ConfigUnitType.Degree, 0.02f)]
+    public float MoveTargetAngle { get; set; } = 24;
+
+    [ConditionBool, UI("Treat target dummy as a boss.",
+        Filter = TargetConfig, Section = 3)]
+    private static readonly bool _dummyBoss = true;
+
+    [UI("If target's TTK is higher than this, regard it as boss.",
+        Filter = TargetConfig, Section = 1)]
+    [Range(10, 1800, ConfigUnitType.Seconds, 0.02f)]
+    public float BossTimeToKill { get; set; } = 90;
+
+    [UI("If target's TTK is lower than this, regard it as dying.",
+                Filter = TargetConfig, Section = 1)]
+    [Range(0, 60, ConfigUnitType.Seconds, 0.02f)]
+    public float DyingTimeToKill { get; set; } = 10;
+
+    [UI("If target's HP percentage is lower than this, regard it as dying.",
+                Filter = TargetConfig, Section = 1)]
+    [Range(0, 0.1f, ConfigUnitType.Percent, 0.01f)]
+    public float IsDyingConfig { get; set; } = 0.02f;
+
+    [UI("Use gapcloser as a damage ability if the distance to your target is less than this.",
+        Filter = TargetConfig, Section = 2)]
+    [Range(0, 30, ConfigUnitType.Yalms, 1f)]
+    public float DistanceForMoving { get; set; } = 1.2f;
+
+    [ConditionBool, UI("Prioritize Low HP targets instead of High HP targets when using Small Target and multiple Small targets present.",
+        Filter = TargetConfig)]
+    private static readonly bool _smallHP = false;
+
+    [ConditionBool, UI("Prioritize Low HP targets instead of High HP targets when using Big Target and multiple Big targets present.",
+        Filter = TargetConfig)]
+    private static readonly bool _bigHP = false;
+
+    #endregion
+
     #region Integer
 
     public int ActionSequencerIndex { get; set; }
@@ -777,6 +810,12 @@ internal partial class Configs : IPluginConfiguration
     #region PvP
     [ConditionBool, UI("Ignore TTK for PvP purposes.", Filter = PvPSpecificControls)]
     private static readonly bool _ignorePvPTTK = true;
+
+    [ConditionBool, UI("Prioritize A tier tomeliths in Shatter.", Filter = PvPSpecificControls)]
+    private static readonly bool _prioAtomelith = false;
+
+    [ConditionBool, UI("Prioritize B tier tomeliths in Shatter.", Filter = PvPSpecificControls)]
+    private static readonly bool _prioBtomelith = false;
 
     [JobConfig, UI("Ignore Invincibility for PvP purposes.", Filter = PvPSpecificControls)]
     private static readonly bool _ignorePvPInvincibility = false;
@@ -882,14 +921,6 @@ internal partial class Configs : IPluginConfiguration
     [JobConfig, UI("Engage settings", Filter = TargetConfig, PvPFilter = JobFilterType.NoJob)]
     private readonly TargetHostileType _hostileType = TargetHostileType.AllTargetsWhenSoloInDuty;
 
-    [ConditionBool, UI("Prioritize Low HP targets instead of High HP targets when using Small Target and multiple Small targets present.",
-        Filter = TargetConfig)]
-    private static readonly bool _smallHP = false;
-
-    [ConditionBool, UI("Prioritize Low HP targets instead of High HP targets when using Big Target and multiple Big targets present.",
-        Filter = TargetConfig)]
-    private static readonly bool _bigHP = false;
-
     [JobConfig]
     private readonly string _PvPRotationChoice = string.Empty;
 
@@ -931,25 +962,25 @@ internal partial class Configs : IPluginConfiguration
     public void Backup()
     {
         Save();
-        File.Copy(Svc.PluginInterface.ConfigFile.FullName, Svc.PluginInterface.ConfigFile.Directory+"\\RotationSolver_Backup.json", true);
+        File.Copy(Svc.PluginInterface.ConfigFile.FullName, Svc.PluginInterface.ConfigFile.Directory + "\\RotationSolver_Backup.json", true);
         Svc.Toasts.ShowNormal("Configs backed up.");
     }
 
     public void Restore()
     {
-        File.Copy(Svc.PluginInterface.ConfigFile.FullName, Svc.PluginInterface.ConfigFile.Directory+"\\RotationSolver_SafetySave.json", true);
-        File.Copy(Svc.PluginInterface.ConfigFile.Directory+"\\RotationSolver_Backup.json", Svc.PluginInterface.ConfigFile.FullName, true);
-            
+        File.Copy(Svc.PluginInterface.ConfigFile.FullName, Svc.PluginInterface.ConfigFile.Directory + "\\RotationSolver_SafetySave.json", true);
+        File.Copy(Svc.PluginInterface.ConfigFile.Directory + "\\RotationSolver_Backup.json", Svc.PluginInterface.ConfigFile.FullName, true);
+
         Configs restoredConfigs = JsonConvert.DeserializeObject<Configs>(
                                       File.ReadAllText(Svc.PluginInterface.ConfigFile.FullName))
                                   ?? new Configs();
-            
+
         if (restoredConfigs.Version != CurrentVersion)
         {
             Svc.Toasts.ShowNormal("Backed up configs are not compatible with the current version.");
             return;
         }
-            
+
         Service.Config = restoredConfigs;
         Save();
         Svc.Toasts.ShowNormal("Configs restored. Closing to set.");

@@ -160,7 +160,7 @@ public static class IActionHelper
     {
         if (actions == null)
         {
-            return Array.Empty<ActionID>();
+            return [];
         }
 
         ActionID[] result = new ActionID[actions.Length];
@@ -199,5 +199,13 @@ public static class IActionHelper
     public static bool IsLastActionCombo()
     {
         return DataCenter.LastAction == DataCenter.LastComboAction;
+    }
+
+    /// <summary>
+    ///
+    /// </summary>
+    public static bool IsNoActionCombo()
+    {
+        return DataCenter.LastComboAction == ActionID.None;
     }
 }

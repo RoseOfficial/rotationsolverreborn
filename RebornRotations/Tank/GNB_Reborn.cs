@@ -1,9 +1,9 @@
 namespace RebornRotations.Tank;
 
-[Rotation("Default", CombatType.PvE, GameVersion = "7.25")]
-[SourceCode(Path = "main/BasicRotations/Tank/GNB_Default.cs")]
+[Rotation("Reborn", CombatType.PvE, GameVersion = "7.25")]
+[SourceCode(Path = "main/RebornRotations/Tank/GNB_Reborn.cs")]
 [Api(5)]
-public sealed class GNB_Default : GunbreakerRotation
+public sealed class GNB_Reborn : GunbreakerRotation
 {
     #region Config Options
 
@@ -107,6 +107,11 @@ public sealed class GNB_Default : GunbreakerRotation
     [RotationDesc(ActionID.HeartOfLightPvE, ActionID.ReprisalPvE)]
     protected override bool DefenseAreaAbility(IAction nextGCD, out IAction? act)
     {
+        if (nextGCD.IsTheSameTo(false, (ActionID)GnashingFangPvE.ID) && !NoMercyPvE.Cooldown.IsCoolingDown)
+        {
+            return base.DefenseAreaAbility(nextGCD, out act);
+        }
+
         if (!HasNoMercy && HeartOfLightPvE.CanUse(out act, skipAoeCheck: true))
         {
             return true;
@@ -123,6 +128,11 @@ public sealed class GNB_Default : GunbreakerRotation
     [RotationDesc(ActionID.HeartOfStonePvE, ActionID.NebulaPvE, ActionID.RampartPvE, ActionID.CamouflagePvE, ActionID.ReprisalPvE)]
     protected override bool DefenseSingleAbility(IAction nextGCD, out IAction? act)
     {
+        if (nextGCD.IsTheSameTo(false, (ActionID)GnashingFangPvE.ID) && !NoMercyPvE.Cooldown.IsCoolingDown)
+        {
+            return base.DefenseSingleAbility(nextGCD, out act);
+        }
+
         //10
         if (CamouflagePvE.CanUse(out act))
         {
@@ -156,6 +166,11 @@ public sealed class GNB_Default : GunbreakerRotation
     [RotationDesc(ActionID.AuroraPvE)]
     protected override bool HealSingleAbility(IAction nextGCD, out IAction? act)
     {
+        if (nextGCD.IsTheSameTo(false, (ActionID)GnashingFangPvE.ID) && !NoMercyPvE.Cooldown.IsCoolingDown)
+        {
+            return base.HealSingleAbility(nextGCD, out act);
+        }
+
         if (!IsLastAbility(ActionID.AuroraPvE) && AuroraPvE.CanUse(out act, usedUp: Player.GetHealthRatio() < 0.9))
         {
             if (AuroraPvE.Target.Target.HasStatus(true, StatusID.Aurora) == false)
@@ -166,8 +181,14 @@ public sealed class GNB_Default : GunbreakerRotation
 
         return base.HealSingleAbility(nextGCD, out act);
     }
+
     protected override bool AttackAbility(IAction nextGCD, out IAction? act)
     {
+        if (nextGCD.IsTheSameTo(false, (ActionID)GnashingFangPvE.ID) && !NoMercyPvE.Cooldown.IsCoolingDown)
+        {
+            return base.AttackAbility(nextGCD, out act);
+        }
+
         if (JugularRipPvE.CanUse(out act))
         {
             return true;

@@ -1,4 +1,5 @@
 using Dalamud.Interface.Colors;
+using FFXIVClientStructs.FFXIV.Client.Game.Gauge;
 
 namespace RotationSolver.Basic.Rotations.Basic;
 
@@ -6,9 +7,6 @@ public partial class SummonerRotation
 {
     /// <inheritdoc/>
     public override MedicineType MedicineType => MedicineType.Intelligence;
-
-    /// <inheritdoc/>
-    public override bool CanHealSingleSpell => DataCenter.PartyMembers.Count == 1 && base.CanHealSingleSpell;
 
     private protected sealed override IBaseAction Raise => ResurrectionPvE;
 
@@ -32,12 +30,17 @@ public partial class SummonerRotation
     /// <summary>
     /// 
     /// </summary>
-    public static bool IsBahamutReady => JobGauge.IsBahamutReady;
+    public static bool IsSolarBahamutReady => JobGauge.AetherFlags.HasFlag((AetherFlags)8) || JobGauge.AetherFlags.HasFlag((AetherFlags)12);
 
     /// <summary>
     /// 
     /// </summary>
-    public static bool IsPhoenixReady => JobGauge.IsPhoenixReady;
+    public static bool IsBahamutReady => !IsPhoenixReady && !IsSolarBahamutReady;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public static bool IsPhoenixReady => JobGauge.AetherFlags.HasFlag((AetherFlags)4) && !JobGauge.AetherFlags.HasFlag((AetherFlags)8);
 
     /// <summary>
     /// 
@@ -133,7 +136,7 @@ public partial class SummonerRotation
     /// <summary>
     /// 
     /// </summary>
-    private static bool HasSummon => DataCenter.HasPet() && SummonTimeEndAfterGCD();
+    public static bool HasSummon => DataCenter.HasPet() && SummonTimeEndAfterGCD();
     #endregion
 
     #region Status
@@ -249,14 +252,21 @@ public partial class SummonerRotation
         ImGui.Text("ReturnSummons: " + ReturnSummons.ToString());
         ImGui.Text("HasAetherflowStacks: " + HasAetherflowStacks.ToString());
         ImGui.Text("Attunement: " + Attunement.ToString());
-        ImGui.Text("IsBahamutReady: " + IsBahamutReady.ToString());
-        ImGui.Text("IsPhoenixReady: " + IsPhoenixReady.ToString());
-        ImGui.Text("IsIfritReady: " + IsIfritReady.ToString());
-        ImGui.Text("IsTitanReady: " + IsTitanReady.ToString());
-        ImGui.Text("IsGarudaReady: " + IsGarudaReady.ToString());
-        ImGui.Text("InIfrit: " + InIfrit.ToString());
-        ImGui.Text("InTitan: " + InTitan.ToString());
-        ImGui.Text("InGaruda: " + InGaruda.ToString());
+        ImGui.Spacing();
+        ImGui.TextColored(IsSolarBahamutReady ? ImGuiColors.HealerGreen : ImGuiColors.DalamudWhite, "IsSolarBahamutReady: " + IsSolarBahamutReady.ToString());
+        ImGui.TextColored(IsBahamutReady ? ImGuiColors.HealerGreen : ImGuiColors.DalamudWhite, "IsBahamutReady: " + IsBahamutReady.ToString());
+        ImGui.TextColored(IsPhoenixReady ? ImGuiColors.HealerGreen : ImGuiColors.DalamudWhite, "IsPhoenixReady: " + IsPhoenixReady.ToString());
+        ImGui.TextColored(IsIfritReady ? ImGuiColors.HealerGreen : ImGuiColors.DalamudWhite, "IsIfritReady: " + InGaruda.ToString());
+        ImGui.TextColored(IsTitanReady ? ImGuiColors.HealerGreen : ImGuiColors.DalamudWhite, "IsTitanReady: " + IsTitanReady.ToString());
+        ImGui.TextColored(IsGarudaReady ? ImGuiColors.HealerGreen : ImGuiColors.DalamudWhite, "IsGarudaReady: " + IsGarudaReady.ToString());
+        ImGui.Spacing();
+        ImGui.TextColored(InSolarBahamut ? ImGuiColors.HealerGreen : ImGuiColors.DalamudWhite, "InSolarBahamut: " + InSolarBahamut.ToString());
+        ImGui.TextColored(InBahamut ? ImGuiColors.HealerGreen : ImGuiColors.DalamudWhite, "InBahamut: " + InBahamut.ToString());
+        ImGui.TextColored(InPhoenix ? ImGuiColors.HealerGreen : ImGuiColors.DalamudWhite, "InPhoenix: " + InPhoenix.ToString());
+        ImGui.TextColored(InIfrit ? ImGuiColors.HealerGreen : ImGuiColors.DalamudWhite, "InIfrit: " + InIfrit.ToString());
+        ImGui.TextColored(InTitan ? ImGuiColors.HealerGreen : ImGuiColors.DalamudWhite, "InTitan: " + InTitan.ToString());
+        ImGui.TextColored(InGaruda ? ImGuiColors.HealerGreen : ImGuiColors.DalamudWhite, "InGaruda: " + InGaruda.ToString());
+        ImGui.Spacing();
         ImGui.Text("SMNAetherflowStacks: " + SMNAetherflowStacks.ToString());
         ImGui.Text("SummonTime: " + SummonTime.ToString());
         ImGui.Text("AttunmentTime: " + AttunmentTime.ToString());
@@ -272,7 +282,6 @@ public partial class SummonerRotation
         ImGui.TextColored(SummonPhoenixPvEReady ? ImGuiColors.HealerGreen : ImGuiColors.DalamudWhite, "SummonPhoenixPvEReady: " + SummonPhoenixPvEReady.ToString());
         ImGui.TextColored(FountainOfFirePvEReady ? ImGuiColors.HealerGreen : ImGuiColors.DalamudWhite, "FountainOfFirePvEReady: " + FountainOfFirePvEReady.ToString());
         ImGui.TextColored(BrandOfPurgatoryPvEReady ? ImGuiColors.HealerGreen : ImGuiColors.DalamudWhite, "BrandOfPurgatoryPvEReady: " + BrandOfPurgatoryPvEReady.ToString());
-        ImGui.TextColored(InPhoenix ? ImGuiColors.HealerGreen : ImGuiColors.DalamudWhite, "InPhoenix: " + InPhoenix.ToString());
         ImGui.TextColored(EnkindlePhoenixPvEReady ? ImGuiColors.HealerGreen : ImGuiColors.DalamudWhite, "EnkindlePhoenixPvEReady: " + EnkindlePhoenixPvEReady.ToString());
         ImGui.TextColored(RubyCatastrophePvEReady ? ImGuiColors.HealerGreen : ImGuiColors.DalamudWhite, "RubyCatastrophePvEReady: " + RubyCatastrophePvEReady.ToString());
         ImGui.TextColored(TopazCatastrophePvEReady ? ImGuiColors.HealerGreen : ImGuiColors.DalamudWhite, "TopazCatastrophePvEReady: " + TopazCatastrophePvEReady.ToString());
@@ -283,7 +292,6 @@ public partial class SummonerRotation
         ImGui.TextColored(SummonSolarBahamutPvEReady ? ImGuiColors.HealerGreen : ImGuiColors.DalamudWhite, "SummonSolarBahamutPvEReady: " + SummonSolarBahamutPvEReady.ToString());
         ImGui.TextColored(UmbralImpulsePvEReady ? ImGuiColors.HealerGreen : ImGuiColors.DalamudWhite, "UmbralImpulsePvEReady: " + UmbralImpulsePvEReady.ToString());
         ImGui.TextColored(UmbralFlarePvEReady ? ImGuiColors.HealerGreen : ImGuiColors.DalamudWhite, "UmbralFlarePvEReady: " + UmbralFlarePvEReady.ToString());
-        ImGui.TextColored(InSolarBahamut ? ImGuiColors.HealerGreen : ImGuiColors.DalamudWhite, "InSolarBahamut: " + InSolarBahamut.ToString());
         ImGui.TextColored(EnkindleSolarBahamutPvEReady ? ImGuiColors.HealerGreen : ImGuiColors.DalamudWhite, "EnkindleSolarBahamutPvEReady: " + EnkindleSolarBahamutPvEReady.ToString());
         ImGui.TextColored(MountainBusterPvEReady ? ImGuiColors.HealerGreen : ImGuiColors.DalamudWhite, "MountainBusterPvEReady: " + MountainBusterPvEReady.ToString());
     }
@@ -343,7 +351,7 @@ public partial class SummonerRotation
 
     static partial void ModifyResurrectionPvE(ref ActionSetting setting)
     {
-
+        setting.ActionCheck = () => Player.CurrentMp >= RaiseMPMinimum;
     }
 
     static partial void ModifySummonTopazPvE(ref ActionSetting setting)
@@ -436,7 +444,7 @@ public partial class SummonerRotation
         setting.ActionCheck = () => InCombat;
         setting.CreateConfig = () => new ActionConfig()
         {
-            TimeToKill = 15,
+            AoeCount = 1,
         };
     }
 
@@ -488,6 +496,10 @@ public partial class SummonerRotation
     static partial void ModifyLuxSolarisPvE(ref ActionSetting setting)
     {
         setting.StatusNeed = [StatusID.RefulgentLux];
+        setting.CreateConfig = () => new ActionConfig()
+        {
+            AoeCount = 1,
+        };
     }
     #endregion
 
@@ -570,7 +582,10 @@ public partial class SummonerRotation
 
     static partial void ModifyEverlastingFlightPvE(ref ActionSetting setting)
     {
-
+        setting.CreateConfig = () => new ActionConfig()
+        {
+            AoeCount = 1,
+        };
     }
 
     static partial void ModifyScarletFlamePvE(ref ActionSetting setting)
@@ -640,7 +655,7 @@ public partial class SummonerRotation
 
     static partial void ModifySummonSolarBahamutPvE(ref ActionSetting setting)
     {
-        setting.ActionCheck = () => SummonSolarBahamutPvEReady && InCombat && SummonTime <= WeaponRemain;
+        setting.ActionCheck = () => IsSolarBahamutReady && InCombat && SummonTime <= WeaponRemain;
         setting.UnlockedByQuestID = 68165;
 
     }

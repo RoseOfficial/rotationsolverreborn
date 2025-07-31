@@ -3502,6 +3502,7 @@ public partial class RotationConfigWindow : Window
     {
         {() => DataCenter.CurrentRotation != null ? "Rotation" : string.Empty, DrawDebugRotationStatus},
         {() => "Player Status", DrawStatus },
+        {() => "Raise Info", DrawRaiseInfo },
         {() => "Duty Info", DrawDutyInfo },
         {() => "Party", DrawParty },
         {() => "Target Data", DrawTargetData },
@@ -3533,6 +3534,7 @@ public partial class RotationConfigWindow : Window
             ImGui.Text($"    {condition}");
         }
         ImGui.Text($"OnlineStatus: {Player.OnlineStatus}");
+        ImGui.Text($"CanBeRaised: {Player.Object.CanBeRaised()}");
         ImGui.Text($"Current Hp: {Player.Object.CurrentHp}");
         ImGui.Text($"Effective Hp: {ObjectHelper.GetEffectiveHp(Player.Object)}");
         ImGui.Text($"Effective Hp Percent: {ObjectHelper.GetEffectiveHpPercent(Player.Object)}");
@@ -3546,7 +3548,6 @@ public partial class RotationConfigWindow : Window
         ImGui.Text($"CountDownTime: {Service.CountDownTime}");
         ImGui.Text($"Combo Time: {DataCenter.ComboTime}");
         ImGui.Text($"TargetingType: {DataCenter.TargetingType}");
-        ImGui.Text($"DeathTarget: {DataCenter.DeathTarget}");
         ImGui.Spacing();
         ImGui.Text($"AttackedTargets: {DataCenter.AttackedTargets?.Count ?? 0}");
         if (DataCenter.AttackedTargets != null)
@@ -3583,21 +3584,6 @@ public partial class RotationConfigWindow : Window
         foreach (VfxNewData vfx in filteredVfx)
         {
             ImGui.Text($"Path: {vfx.Path}");
-        }
-
-        // Display dead party members
-        IEnumerable<IBattleChara> deadPartyMembers = DataCenter.PartyMembers.GetDeath();
-        if (deadPartyMembers.Any())
-        {
-            ImGui.Text("Dead Party Members:");
-            foreach (IBattleChara member in deadPartyMembers)
-            {
-                ImGui.Text($"- {member.Name}");
-            }
-        }
-        else
-        {
-            ImGui.Text("Dead Party Members: None");
         }
 
         // Display all party members
@@ -3667,6 +3653,39 @@ public partial class RotationConfigWindow : Window
             byte stacks = Player.Object.StatusStack(true, (StatusID)status.StatusId);
             string stackDisplay = stacks == byte.MaxValue ? "N/A" : stacks.ToString(); // Convert 255 to "N/A"
             ImGui.Text($"{status.GameData.Value.Name}: {status.StatusId} From: {source} Stacks: {stackDisplay}");
+        }
+    }
+
+    private static void DrawRaiseInfo()
+    {
+        ImGui.Text($"Can Raise: {DataCenter.CanRaise()}");
+        ImGui.Text($"Death Target: {DataCenter.DeathTarget}");
+        // Display dead party members
+        IEnumerable<IBattleChara> deadPartyMembers = DataCenter.PartyMembers.GetDeath();
+        if (deadPartyMembers.Any())
+        {
+            ImGui.Text("Dead Party Members:");
+            foreach (IBattleChara member in deadPartyMembers)
+            {
+                ImGui.Text($"- {member.Name}");
+            }
+        }
+        else
+        {
+            ImGui.Text("Dead Party Members: None");
+        }
+        IEnumerable<IBattleChara> deadAllianceMembers = DataCenter.AllianceMembers.GetDeath();
+        if (deadAllianceMembers.Any())
+        {
+            ImGui.Text("Dead Alliance Members:");
+            foreach (IBattleChara member in deadAllianceMembers)
+            {
+                ImGui.Text($"- {member.Name}");
+            }
+        }
+        else
+        {
+            ImGui.Text("Dead Alliance Members: None");
         }
     }
 
@@ -3744,11 +3763,28 @@ public partial class RotationConfigWindow : Window
         ImGui.Text($"Limit Break: {CustomRotation.LimitBreakLevel}");
         ImGui.Spacing();
         ImGui.Text($"Object Data");
-        ImGui.Text($"AllTargets Count: {DataCenter.AllTargets.Count()}");
-        ImGui.Text($"AllHostileTargets Count: {DataCenter.AllHostileTargets.Count()}");
+        ImGui.Text($"AllTargets Count: {DataCenter.AllTargets.Count}");
+        ImGui.Text($"AllHostileTargets Count: {DataCenter.AllHostileTargets.Count}");
         foreach (IBattleChara item in DataCenter.AllHostileTargets)
         {
             ImGui.Text(item.Name.ToString());
+        }
+        ImGui.Spacing();
+        ImGui.Text($"Party Composition:");
+        var party = CustomRotation.PartyComposition;
+        if (party.Count == 0)
+        {
+            ImGui.Text("No party members.");
+        }
+        else
+        {
+            for (int i = 0; i < party.Count; i++)
+            {
+                // Assuming RowRef<ClassJob> has a .Value property with a .Name or .Abbreviation
+                var classJob = party[i].Value;
+                string jobName = classJob.Abbreviation.ToString() ?? classJob.Name.ToString() ?? $"Job #{i}";
+                ImGui.Text($"{i + 1}: {jobName}");
+            }
         }
     }
 
@@ -3771,12 +3807,14 @@ public partial class RotationConfigWindow : Window
 
         if (target is IBattleChara battleChara)
         {
-            ImGui.Text($"NamePlate: {battleChara.GetNamePlateIcon()}");
             ImGui.Text($"Is Status Capped: {StatusHelper.IsStatusCapped(battleChara)}");
             ImGui.Text($"CanSee: {battleChara.CanSee()}");
+            ImGui.Text($"CanBeRaised: {battleChara.CanBeRaised()}");
+            ImGui.Text($"HP: {battleChara.CurrentHp} / {battleChara.MaxHp}");
+            ImGui.Spacing();
+            ImGui.Text($"NamePlate Icon ID: {battleChara.GetNamePlateIcon()}");
             ImGui.Text($"Name Id: {battleChara.NameId}");
             ImGui.Text($"Data Id: {battleChara.DataId}");
-            ImGui.Text($"HP: {battleChara.CurrentHp} / {battleChara.MaxHp}");
             ImGui.Spacing();
             ImGui.Text($"Is Attackable: {battleChara.IsAttackable()}");
             ImGui.Text($"Is Others Players Mob: {battleChara.IsOthersPlayersMob()}");

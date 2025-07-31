@@ -3,10 +3,10 @@ using System.ComponentModel;
 
 namespace RebornRotations.Healer;
 
-[Rotation("Default", CombatType.PvE, GameVersion = "7.25")]
-[SourceCode(Path = "main/BasicRotations/Healer/SCH_Default.cs")]
+[Rotation("Reborn", CombatType.PvE, GameVersion = "7.25")]
+[SourceCode(Path = "main/RebornRotations/Healer/SCH_Reborn.cs")]
 [Api(5)]
-public sealed class SCH_Default : ScholarRotation
+public sealed class SCH_Reborn : ScholarRotation
 {
     #region Config Options
     [Range(0, 1, ConfigUnitType.Percent)]

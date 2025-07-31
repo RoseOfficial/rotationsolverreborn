@@ -237,6 +237,39 @@ internal static class MajorUpdater
             }
 
             MiscUpdater.UpdateMisc();
+
+            if (Service.Config.TargetFreely && !DataCenter.IsPvP)
+            {
+                IAction? nextAction2 = ActionUpdater.NextAction;
+                if (nextAction2 == null)
+                {
+                    if (Svc.Targets.Target == null)
+                    {
+                        // Try to find the closest enemy and target it
+                        IBattleChara? closestEnemy = null;
+                        float minDistance = float.MaxValue;
+
+                        foreach (var enemy in DataCenter.AllHostileTargets)
+                        {
+                            if (enemy == null || !enemy.IsEnemy() || enemy == Player.Object)
+                                continue;
+
+                            float distance = Vector3.Distance(Player.Object.Position, enemy.Position);
+                            if (distance < minDistance)
+                            {
+                                minDistance = distance;
+                                closestEnemy = enemy;
+                            }
+                        }
+
+                        if (closestEnemy != null)
+                        {
+                            Svc.Targets.Target = closestEnemy;
+                            PluginLog.Information($"Targeting {closestEnemy}");
+                        }
+                    }
+                }
+            }
         }
         catch (Exception ex)
         {
