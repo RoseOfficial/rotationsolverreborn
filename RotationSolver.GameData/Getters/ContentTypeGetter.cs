@@ -1,4 +1,4 @@
-﻿using Lumina.Excel.GeneratedSheets;
+using Lumina.Excel.Sheets;
 
 namespace RotationSolver.GameData.Getters;
 
@@ -15,7 +15,7 @@ internal class ContentTypeGetter(Lumina.GameData gameData)
     /// <returns><c>true</c> if the item should be added; otherwise, <c>false</c>.</returns>
     protected override bool AddToList(ContentType item)
     {
-        var name = item.Name.RawString;
+        var name = item.Name.ToString();
         if (string.IsNullOrEmpty(name) || !name.All(char.IsAscii))
         {
             return false;
@@ -30,7 +30,7 @@ internal class ContentTypeGetter(Lumina.GameData gameData)
     /// <returns>The generated code for the item.</returns>
     protected override string ToCode(ContentType item)
     {
-        var name = item.Name.RawString.ToPascalCase();
+        var name = item.Name.ToString().ToPascalCase();
         return $"""
         /// <summary>
         /// 

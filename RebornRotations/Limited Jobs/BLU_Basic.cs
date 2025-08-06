@@ -1,8 +1,8 @@
 namespace RebornRotations.Magical;
 
-[Rotation("Basic BLU", CombatType.PvE, GameVersion = "7.25")]
+[Rotation("Basic BLU", CombatType.PvE, GameVersion = "7.3")]
 [SourceCode(Path = "main/BasicRotations/Limited Jobs/BLU_Basic.cs")]
-[Api(5)]
+[Api(6)]
 public sealed class Blue_Basic : BlueMageRotation
 {
     [RotationConfig(CombatType.PvE, Name = "Single Target Spell")]

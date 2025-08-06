@@ -242,7 +242,10 @@ internal class ControlWindow : CtrlWindow
                     {
                         gcdHelp += "\n" + gcd.ToString();
                     }
-                    DrawIAction(texture.ImGuiHandle, baseId + nameof(gcd), gcdW, command, gcdHelp);
+                    if (texture?.Handle != null)
+                    {
+                        DrawIAction(texture, baseId + nameof(gcd), gcdW, command, gcdHelp);
+                    }
                     if (IconSet.GetTexture(ability, out texture))
                     {
                         ImGui.SameLine();
@@ -254,7 +257,10 @@ internal class ControlWindow : CtrlWindow
                         {
                             abilityHelp += "\n" + ability.ToString();
                         }
-                        DrawIAction(texture.ImGuiHandle, baseId + nameof(ability), abilityW, command, abilityHelp);
+                        if (texture?.Handle != null)
+                        {
+                            DrawIAction(texture, baseId + nameof(ability), abilityW, command, abilityHelp);
+                        }
                     }
                 }
             }
@@ -329,9 +335,9 @@ internal class ControlWindow : CtrlWindow
                 string baseId = "ImgButton" + command.ToString();
 
                 ImGui.SetCursorPosX(ImGui.GetCursorPosX() + Math.Max(0, (strWidth / 2) - (width / 2)));
-                if (texture != null)
+                if (texture?.Handle != null)
                 {
-                    DrawIAction(texture.ImGuiHandle, baseId, abilityW, command, help);
+                    DrawIAction(texture, baseId, abilityW, command, help);
                 }
             }
         }
@@ -371,10 +377,10 @@ internal class ControlWindow : CtrlWindow
                 string help = command.GetDescription();
                 string baseId = "ImgButton" + command.ToString();
 
-                if (IconSet.GetTexture(iconId, out IDalamudTextureWrap? texture))
+                if (IconSet.GetTexture(iconId, out IDalamudTextureWrap? texture) && texture?.Handle != null)
                 {
                     ImGui.SetCursorPosX(ImGui.GetCursorPosX() + Math.Max(0, (strWidth / 2) - (width / 2)));
-                    DrawIAction(texture.ImGuiHandle, baseId, abilityW, command, help);
+                    DrawIAction(texture, baseId, abilityW, command, help);
                 }
 
             }
@@ -399,18 +405,18 @@ internal class ControlWindow : CtrlWindow
         }
     }
 
-    private static void DrawIAction(nint handle, string id, float width, SpecialCommandType command, string help)
+    private static void DrawIAction(IDalamudTextureWrap handle, string id, float width, SpecialCommandType command, string help)
     {
         Vector2 cursor = ImGui.GetCursorPos();
         if (ImGuiHelper.NoPaddingNoColorImageButton(handle, Vector2.One * width, id))
         {
             _ = Svc.Commands.ProcessCommand(command.GetCommandStr());
         }
-        ImGuiHelper.DrawActionOverlay(cursor, width, IconSet.GetTexture(0u, out IDalamudTextureWrap? text) && text.ImGuiHandle == handle ? -1 : 1);
+        ImGuiHelper.DrawActionOverlay(cursor, width, IconSet.GetTexture(0u, out IDalamudTextureWrap? text) && text?.Handle != null && text.Handle.Handle == handle.Handle ? -1 : 1);
         ImguiTooltips.HoveredTooltip(help);
     }
 
-    private static void DrawIAction(nint handle, string id, float width, StateCommandType command, string help)
+    private static void DrawIAction(IDalamudTextureWrap handle, string id, float width, StateCommandType command, string help)
     {
         Vector2 cursor = ImGui.GetCursorPos();
         if (ImGuiHelper.NoPaddingNoColorImageButton(handle, Vector2.One * width, id))
@@ -431,7 +437,7 @@ internal class ControlWindow : CtrlWindow
         Vector2 cursor = ImGui.GetCursorPos();
 
         string desc = action?.Name ?? string.Empty;
-        if (ImGuiHelper.NoPaddingNoColorImageButton(texture.ImGuiHandle, Vector2.One * width, desc))
+        if (texture?.Handle != null && ImGuiHelper.NoPaddingNoColorImageButton(texture, Vector2.One * width, desc))
         {
             if (!DataCenter.State)
             {

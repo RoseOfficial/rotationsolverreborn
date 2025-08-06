@@ -1,8 +1,8 @@
 ﻿namespace RebornRotations.Magical;
 
-[Rotation("zAlpha DO NOT USE", CombatType.PvE, GameVersion = "7.25")]
+[Rotation("zAlpha DO NOT USE", CombatType.PvE, GameVersion = "7.3")]
 [SourceCode(Path = "main/BasicRotations/Magical/BLM_Alpha.cs")]
-[Api(5)]
+[Api(6)]
 public class BLM_zAlpha : BlackMageRotation
 {
     #region Config Options

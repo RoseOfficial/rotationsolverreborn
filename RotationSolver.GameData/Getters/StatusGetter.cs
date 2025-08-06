@@ -1,4 +1,4 @@
-﻿using Lumina.Excel.GeneratedSheets;
+using Lumina.Excel.Sheets;
 using System.Text;
 
 namespace RotationSolver.GameData.Getters;
@@ -27,7 +27,7 @@ internal class StatusGetter(Lumina.GameData gameData)
     /// <returns>True if the status should be added; otherwise, false.</returns>
     protected override bool AddToList(Status item)
     {
-        var name = item.Name.RawString;
+        var name = item.Name.ToString();
         if (string.IsNullOrEmpty(name))
         {
             // Allow statuses without a name
@@ -46,7 +46,7 @@ internal class StatusGetter(Lumina.GameData gameData)
     /// <returns>The code representation of the status.</returns>
     protected override string ToCode(Status item)
     {
-        var name = item.Name.RawString;
+        var name = item.Name.ToString();
         if (string.IsNullOrEmpty(name))
         {
             name = $"UnnamedStatus_{item.RowId}";
@@ -67,8 +67,12 @@ internal class StatusGetter(Lumina.GameData gameData)
             name = "Status" + name;
         }
 
-        var desc = item.Description.RawString;
-        var jobs = item.ClassJobCategory.Value?.Name.RawString;
+        var desc = item.Description.ToString();
+        
+        // Sanitize the description to remove invalid XML tags
+        desc = Util.SanitizeXmlDescription(desc);
+        
+        var jobs = item.ClassJobCategory.IsValid ? item.ClassJobCategory.Value.Name.ToString() : string.Empty;
         jobs = string.IsNullOrEmpty(jobs) ? string.Empty : $" ({jobs})";
 
         var cate = item.StatusCategory switch
@@ -83,7 +87,7 @@ internal class StatusGetter(Lumina.GameData gameData)
         {
             sb.AppendLine($"""
     /// <summary>
-    /// <see href="https://garlandtools.org/db/#status/{item.RowId}"><strong>{item.Name.RawString.Replace("&", "and")}</strong></see>{cate}{jobs}
+    /// <see href="https://garlandtools.org/db/#status/{item.RowId}"><strong>{item.Name.ToString().Replace("&", "and")}</strong></see>{cate}{jobs}
     /// <para>{desc.Replace("\n", "</para>\n/// <para>")}</para>
     /// </summary>
     """);

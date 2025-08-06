@@ -7,6 +7,8 @@ namespace RotationSolver.Basic.Rotations;
 /// </summary>
 public partial class CustomRotation
 {
+    private static readonly BaseItem PhoenixDownItem = new(4570);
+
     #region Burst Medicine
 
     /// <summary>

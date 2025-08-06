@@ -1,8 +1,8 @@
 ﻿namespace RebornRotations.PVPRotations.Ranged;
 
-[Rotation("Default PVP", CombatType.PvP, GameVersion = "7.25")]
+[Rotation("Default PVP", CombatType.PvP, GameVersion = "7.3")]
 [SourceCode(Path = "main/RebornRotations/PVPRotations/Ranged/BRD_Default.PvP.cs")]
-[Api(5)]
+[Api(6)]
 public sealed class BRD_DefaultPvP : BardRotation
 {
     #region Configurations

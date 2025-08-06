@@ -1,4 +1,4 @@
-﻿namespace RotationSolver.GameData.Getters.Actions;
+namespace RotationSolver.GameData.Getters.Actions;
 
 /// <summary>
 /// Abstract base class for getting action rotation rows from the Excel sheet.
@@ -19,7 +19,7 @@ internal abstract class ActionRotationGetterBase : ActionGetterBase
     /// </summary>
     /// <param name="item">The action item to convert.</param>
     /// <returns>The code representation of the action item.</returns>
-    protected override string ToCode(Lumina.Excel.GeneratedSheets.Action item)
+    protected override string ToCode(Lumina.Excel.Sheets.Action item)
     {
         var name = GetName(item);
         var descName = item.GetDescName();

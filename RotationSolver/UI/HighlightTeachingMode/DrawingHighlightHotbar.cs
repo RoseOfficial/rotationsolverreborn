@@ -308,7 +308,7 @@ public readonly struct ImageDrawing(IDalamudTextureWrap texture, Vector2 pt1, Ve
     /// <summary> Draw on the <seealso cref="ImGui" /> </summary>
     public void Draw()
     {
-        ImGui.GetWindowDrawList().AddImage(_texture.ImGuiHandle, _pt1, _pt2, _uv1, _uv2, _col);
+        ImGui.GetWindowDrawList().AddImage(_texture.Handle, _pt1, _pt2, _uv1, _uv2, _col);
     }
 
     private readonly uint _col = col;

@@ -2,7 +2,6 @@
 using ECommons.DalamudServices;
 using ECommons.ExcelServices;
 using ECommons.ImGuiMethods;
-using ECommons.Throttlers;
 using Lumina.Excel.Sheets;
 using Svg;
 using System.Collections.Concurrent;

@@ -318,7 +318,7 @@ internal abstract class Searchable(PropertyInfo property) : ISearchable
 
         if (IconSet.GetTexture(IconSet.GetJobIcon(DataCenter.Job, IconType.Framed), out Dalamud.Interface.Textures.TextureWraps.IDalamudTextureWrap? texture))
         {
-            ImGui.Image(texture.ImGuiHandle, Vector2.One * 24 * ImGuiHelpers.GlobalScale);
+            ImGui.Image(texture.Handle, Vector2.One * 24 * ImGuiHelpers.GlobalScale);
             ImguiTooltips.HoveredTooltip(UiString.JobConfigTip.GetDescription());
         }
     }

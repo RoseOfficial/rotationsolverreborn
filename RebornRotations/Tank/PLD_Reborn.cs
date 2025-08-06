@@ -2,9 +2,9 @@
 
 namespace RebornRotations.Tank;
 
-[Rotation("Reborn", CombatType.PvE, GameVersion = "7.25")]
+[Rotation("Reborn", CombatType.PvE, GameVersion = "7.3")]
 [SourceCode(Path = "main/RebornRotations/Tank/PLD_Reborn.cs")]
-[Api(5)]
+[Api(6)]
 
 public sealed class PLD_Reborn : PaladinRotation
 {

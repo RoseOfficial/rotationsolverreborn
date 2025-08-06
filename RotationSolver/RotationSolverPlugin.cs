@@ -185,16 +185,16 @@ public sealed class RotationSolverPlugin : IDalamudPlugin, IDisposable
 
         ChangeUITranslation();
 
-        OpenLinkPayload = pluginInterface.AddChatLinkHandler(0, (id, str) =>
+        OpenLinkPayload = Svc.Chat.AddChatLinkHandler((guid, seString) =>
         {
-            if (id == 0)
+            if (guid == Guid.Empty)
             {
                 OpenConfigWindow();
             }
         });
-        HideWarningLinkPayload = pluginInterface.AddChatLinkHandler(1, (id, str) =>
+        HideWarningLinkPayload = Svc.Chat.AddChatLinkHandler((guid, seString) =>
         {
-            if (id == 1)
+            if (guid == Guid.Empty)
             {
                 Service.Config.HideWarning.Value = true;
                 Svc.Chat.Print("Warning has been hidden.");

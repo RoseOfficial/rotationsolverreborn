@@ -3,9 +3,9 @@ using System.ComponentModel;
 
 namespace RebornRotations.Healer;
 
-[Rotation("Reborn", CombatType.PvE, GameVersion = "7.25")]
+[Rotation("Reborn", CombatType.PvE, GameVersion = "7.3")]
 [SourceCode(Path = "main/RebornRotations/Healer/SCH_Reborn.cs")]
-[Api(5)]
+[Api(6)]
 public sealed class SCH_Reborn : ScholarRotation
 {
     #region Config Options
@@ -157,27 +157,21 @@ public sealed class SCH_Reborn : ScholarRotation
         {
             if (DeploymentTacticsUsage == DeploymentTacticsUsageStrategy.CatalyzeOnly)
             {
-                foreach (IBattleChara member in PartyMembers)
+                if (DeploymentTacticsPvE.CanUse(out act))
                 {
-                    if (member.HasStatus(true, StatusID.Catalyze))
+                    if (DeploymentTacticsPvE.Target.Target.IsParty() && DeploymentTacticsPvE.Target.Target.HasStatus(true, StatusID.Catalyze))
                     {
-                        if (DeploymentTacticsPvE.CanUse(out act))
-                        {
-                            return true;
-                        }
+                        return true;
                     }
                 }
             }
             else if (DeploymentTacticsUsage == DeploymentTacticsUsageStrategy.CatalyzeOrGalvanize)
             {
-                foreach (IBattleChara member in PartyMembers)
+                if (DeploymentTacticsPvE.CanUse(out act))
                 {
-                    if (member.HasStatus(true, StatusID.Galvanize))
+                    if (DeploymentTacticsPvE.Target.Target.IsParty() && DeploymentTacticsPvE.Target.Target.HasStatus(true, StatusID.Catalyze))
                     {
-                        if (DeploymentTacticsPvE.CanUse(out act))
-                        {
-                            return true;
-                        }
+                        return true;
                     }
                 }
             }

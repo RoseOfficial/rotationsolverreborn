@@ -52,7 +52,7 @@ internal static class MiscUpdater
                     new IconPayload(icon),
                     new TextPayload(showStr)
                 );
-                _dtrEntry.OnClick = RSCommands.IncrementState;
+                _dtrEntry.OnClick = _ => RSCommands.IncrementState();
             }
         }
         else if (_dtrEntry != null && _dtrEntry.Shown)

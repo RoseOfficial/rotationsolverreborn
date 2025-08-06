@@ -35,7 +35,7 @@ public static class ActionIdHelper
     public static unsafe bool IsCoolingDownGroup(byte cdGroup)
     {
         RecastDetail* detail = GetCoolDownDetail(cdGroup);
-        return detail != null && detail->IsActive != 0;
+        return detail != null && detail->IsActive != false;
     }
 
     /// <summary>

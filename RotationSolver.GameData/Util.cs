@@ -1,4 +1,4 @@
-﻿using Lumina.Excel.GeneratedSheets;
+using Lumina.Excel.Sheets;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -16,7 +16,7 @@ internal static partial class Util
     public static bool IsSingleJobForCombat(this ClassJobCategory jobCategory)
     {
         if (jobCategory.RowId == 68) return true; // ACN SMN SCH 
-        var str = jobCategory.Name.RawString.Replace(" ", "");
+        var str = jobCategory.Name.ToString().Replace(" ", "");
         if (!str.All(char.IsUpper)) return false;
         if (str.Length is not 3 and not 6) return false;
         return true;
@@ -129,7 +129,7 @@ internal static partial class Util
     /// <param name="desc">The description of the action.</param>
     /// <param name="isDuty">Indicates if the action is a duty action.</param>
     /// <returns>The generated action code.</returns>
-    public static string ToCode(this Lumina.Excel.GeneratedSheets.Action item,
+public static string ToCode(this Lumina.Excel.Sheets.Action item,
         string actionName, string actionDescName, string desc, bool isDuty)
     {
         if (isDuty)
@@ -160,8 +160,61 @@ internal static partial class Util
         /// {{desc}}
         /// </summary>
         {{(isDuty ? $"[ID({item.RowId})]" : string.Empty)}}
-        {{(item.ActionCategory.Row is 15 ? "private" : "public")}} IBaseAction {{actionName}} => _{{actionName}}Creator.Value;
+        {{(item.ActionCategory.RowId is 15 ? "private" : "public")}} IBaseAction {{actionName}} => _{{actionName}}Creator.Value;
         """;
+    }
+
+    /// <summary>
+    /// Sanitizes a description string to be safe for XML documentation comments.
+    /// </summary>
+    /// <param name="description">The description to sanitize.</param>
+    /// <returns>The sanitized description safe for XML comments.</returns>
+    public static string SanitizeXmlDescription(string description)
+    {
+        if (string.IsNullOrEmpty(description))
+            return description;
+
+        // Remove or replace problematic HTML-like tags that are not valid XML
+        // Handle colortype tags with parentheses and their remnants
+        description = System.Text.RegularExpressions.Regex.Replace(description, @"<colortype\([^)]*\)>", "", RegexOptions.IgnoreCase);
+        description = System.Text.RegularExpressions.Regex.Replace(description, @"</colortype>", "", RegexOptions.IgnoreCase);
+        
+        // Handle edgecolortype tags with parentheses and their remnants
+        description = System.Text.RegularExpressions.Regex.Replace(description, @"<edgecolortype\([^)]*\)>", "", RegexOptions.IgnoreCase);
+        description = System.Text.RegularExpressions.Regex.Replace(description, @"</edgecolortype>", "", RegexOptions.IgnoreCase);
+        
+        // Handle if tags with parentheses and their remnants
+        description = System.Text.RegularExpressions.Regex.Replace(description, @"<if\([^)]*\)>", "", RegexOptions.IgnoreCase);
+        description = System.Text.RegularExpressions.Regex.Replace(description, @"</if>", "", RegexOptions.IgnoreCase);
+        
+        // Handle other problematic tags
+        description = System.Text.RegularExpressions.Regex.Replace(description, @"</?br/?>", " ", RegexOptions.IgnoreCase);
+        description = System.Text.RegularExpressions.Regex.Replace(description, @"</?indent/?>", "", RegexOptions.IgnoreCase);
+        description = System.Text.RegularExpressions.Regex.Replace(description, @"</?sheet\([^)]*\)/?>", "", RegexOptions.IgnoreCase);
+        description = System.Text.RegularExpressions.Regex.Replace(description, @"</?value\([^)]*\)/?>", "", RegexOptions.IgnoreCase);
+        
+        // Remove any remaining tags with parentheses in them
+        description = System.Text.RegularExpressions.Regex.Replace(description, @"<[^>]*\([^>]*\)[^>]*>", "", RegexOptions.IgnoreCase);
+        
+        // Clean up tag remnants like ,)> or similar patterns that might be left behind
+        description = System.Text.RegularExpressions.Regex.Replace(description, @"[,)]\s*>", "", RegexOptions.IgnoreCase);
+        description = System.Text.RegularExpressions.Regex.Replace(description, @"<\s*[,)]", "", RegexOptions.IgnoreCase);
+        
+        // Remove standalone parentheses and commas that might be remnants
+        description = System.Text.RegularExpressions.Regex.Replace(description, @"\s*[,)]\s*(?=\s|$)", "", RegexOptions.IgnoreCase);
+        
+        // Clean up multiple spaces
+        description = System.Text.RegularExpressions.Regex.Replace(description, @"\s+", " ");
+        
+        // Clean up any remaining invalid XML characters
+        description = System.Text.RegularExpressions.Regex.Replace(description, @"[\x00-\x08\x0B\x0C\x0E-\x1F]", "");
+        
+        // Escape XML special characters, but preserve the structure for later XML processing
+        // Only escape & and quotes, let the XML processing handle < and > for valid XML tags
+        description = description.Replace("&", "&amp;");
+        description = description.Replace("\"", "&quot;");
+        
+        return description.Trim();
     }
 
     /// <summary>
@@ -169,13 +222,13 @@ internal static partial class Util
     /// </summary>
     /// <param name="action">The action.</param>
     /// <returns>The description name of the action.</returns>
-    public static string GetDescName(this Lumina.Excel.GeneratedSheets.Action action)
+public static string GetDescName(this Lumina.Excel.Sheets.Action action)
     {
-        var jobs = action.ClassJobCategory.Value?.Name.RawString;
+        var jobs = action.ClassJobCategory.IsValid ? action.ClassJobCategory.Value.Name.ToString() : string.Empty;
         jobs = string.IsNullOrEmpty(jobs) ? string.Empty : $" ({jobs})";
 
         var cate = action.IsPvP ? " <i>PvP</i>" : " <i>PvE</i>";
 
-        return $"<see href=\"https://garlandtools.org/db/#action/{action.RowId}\"><strong>{action.Name.RawString}</strong></see>{cate}{jobs} [{action.RowId}] [{action.ActionCategory.Value?.Name.RawString ?? string.Empty}]";
+        return $"<see href=\"https://garlandtools.org/db/#action/{action.RowId}\"><strong>{action.Name.ToString()}</strong></see>{cate}{jobs} [{action.RowId}] [{(action.ActionCategory.IsValid ? action.ActionCategory.Value.Name.ToString() : string.Empty)}]";
     }
 }

@@ -21,7 +21,7 @@ namespace RotationSolver.UI
                 ImFontPtr font = lockedHandle.ImFont;
 
                 // Check if the font pointer is valid
-                if (font.NativePtr == null)
+                if (!font.IsLoaded())
                 {
                     return ImGui.GetFont();
                 }

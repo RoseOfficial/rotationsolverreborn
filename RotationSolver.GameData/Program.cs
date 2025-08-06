@@ -1,6 +1,6 @@
-﻿using Lumina;
+using Lumina;
 using Lumina.Data;
-using Lumina.Excel.GeneratedSheets;
+using Lumina.Excel.Sheets;
 using Newtonsoft.Json.Linq;
 using RotationSolver.GameData;
 using RotationSolver.GameData.Getters;
@@ -29,9 +29,15 @@ public class Program
             });
 
             var dirInfo = new DirectoryInfo(typeof(Program).Assembly.Location);
+            Console.WriteLine($"Assembly location: {typeof(Program).Assembly.Location}");
             dirInfo = dirInfo.Parent!.Parent!.Parent!.Parent!.Parent!.Parent!;
+            Console.WriteLine($"Resolved directory: {dirInfo.FullName}");
+            
+            var resourcePath = Path.Combine(dirInfo.FullName, "RotationSolver.SourceGenerators\\Properties\\Resources.resx");
+            Console.WriteLine($"Resource path: {resourcePath}");
+            Console.WriteLine($"Resource path exists: {File.Exists(resourcePath)}");
 
-            using var res = new ResXResourceWriter(Path.Combine(dirInfo.FullName, "RotationSolver.SourceGenerators\\Properties\\Resources.resx"));
+            using var res = new ResXResourceWriter(resourcePath);
 
             res.AddResource("StatusId", new StatusGetter(gameData).GetCode());
             res.AddResource("ContentType", new ContentTypeGetter(gameData).GetCode());

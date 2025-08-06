@@ -1,8 +1,8 @@
 ﻿namespace RebornRotations.Magical;
 
-[Rotation("Reborn", CombatType.PvE, GameVersion = "7.25")]
+[Rotation("Reborn", CombatType.PvE, GameVersion = "7.3")]
 [SourceCode(Path = "main/RebornRotations/Magical/PCT_Reborn.cs")]
-[Api(5)]
+[Api(6)]
 public sealed class PCT_Reborn : PictomancerRotation
 {
     #region Config Options

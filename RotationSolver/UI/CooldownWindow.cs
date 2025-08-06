@@ -63,7 +63,7 @@ internal class CooldownWindow() : CtrlWindow(nameof(CooldownWindow))
 
             ImGui.Text(pair.Key);
 
-            ImGui.Columns(count, null, false);
+            ImGui.Columns(count, string.Empty, false);
             uint itemIndex = 0;
             foreach (IAction item in showItems)
             {

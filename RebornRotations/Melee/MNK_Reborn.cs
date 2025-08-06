@@ -3,9 +3,9 @@ using System.ComponentModel;
 
 namespace RebornRotations.Melee;
 
-[Rotation("Reborn", CombatType.PvE, GameVersion = "7.25", Description = "Uses Lunar Solar Opener from The Balance")]
+[Rotation("Reborn", CombatType.PvE, GameVersion = "7.3", Description = "Uses Lunar Solar Opener from The Balance")]
 [SourceCode(Path = "main/RebornRotations/Melee/MNK_Reborn.cs")]
-[Api(5)]
+[Api(6)]
 
 public sealed class MNK_Reborn : MonkRotation
 {

@@ -261,19 +261,34 @@ internal static class ImGuiHelper
     }
 
     #region Image
-    internal static unsafe bool SilenceImageButton(IntPtr handle, Vector2 size, bool selected, string id = "")
+    internal static unsafe bool SilenceImageButton(IDalamudTextureWrap handle, Vector2 size, bool selected, string id = "")
     {
+        if (handle == null)
+        {
+            return false;
+        }
+
         return SilenceImageButton(handle, size, Vector2.Zero, Vector2.One, selected, id);
     }
 
-    internal static unsafe bool SilenceImageButton(IntPtr handle, Vector2 size, Vector2 uv0, Vector2 uv1, bool selected, string id = "")
+    internal static unsafe bool SilenceImageButton(IDalamudTextureWrap handle, Vector2 size, Vector2 uv0, Vector2 uv1, bool selected, string id = "")
     {
+        if (handle == null)
+        {
+            return false;
+        }
+
         uint buttonColor = selected ? ImGui.ColorConvertFloat4ToU32(*ImGui.GetStyleColorVec4(ImGuiCol.Header)) : 0;
         return SilenceImageButton(handle, size, uv0, uv1, buttonColor, id);
     }
 
-    internal static unsafe bool SilenceImageButton(IntPtr handle, Vector2 size, Vector2 uv0, Vector2 uv1, uint buttonColor, string id = "")
+    internal static unsafe bool SilenceImageButton(IDalamudTextureWrap handle, Vector2 size, Vector2 uv0, Vector2 uv1, uint buttonColor, string id = "")
     {
+        if (handle == null)
+        {
+            return false;
+        }
+
         const int StyleColorCount = 3;
 
         ImGui.PushStyleColor(ImGuiCol.ButtonActive, ImGui.ColorConvertFloat4ToU32(*ImGui.GetStyleColorVec4(ImGuiCol.HeaderActive)));
@@ -286,13 +301,23 @@ internal static class ImGuiHelper
         return buttonClicked;
     }
 
-    internal static unsafe bool NoPaddingNoColorImageButton(IntPtr handle, Vector2 size, string id = "")
+    internal static unsafe bool NoPaddingNoColorImageButton(IDalamudTextureWrap handle, Vector2 size, string id = "")
     {
+        if (handle == null)
+        {
+            return false;
+        }
+
         return NoPaddingNoColorImageButton(handle, size, Vector2.Zero, Vector2.One, id);
     }
 
-    internal static unsafe bool NoPaddingNoColorImageButton(IntPtr handle, Vector2 size, Vector2 uv0, Vector2 uv1, string id = "")
+    internal static unsafe bool NoPaddingNoColorImageButton(IDalamudTextureWrap handle, Vector2 size, Vector2 uv0, Vector2 uv1, string id = "")
     {
+        if (handle == null)
+        {
+            return false;
+        }
+
         const int StyleColorCount = 3;
 
         ImGui.PushStyleColor(ImGuiCol.ButtonActive, 0);
@@ -304,14 +329,27 @@ internal static class ImGuiHelper
         return buttonClicked;
     }
 
-    internal static bool NoPaddingImageButton(IntPtr handle, Vector2 size, Vector2 uv0, Vector2 uv1, string id = "")
+    internal static bool NoPaddingImageButton(IDalamudTextureWrap handle, Vector2 size, Vector2 uv0, Vector2 uv1, string id = "")
     {
+        if (handle == null)
+        {
+            return false;
+        }
+        
         ImGuiStylePtr style = ImGui.GetStyle();
         Vector2 originalPadding = style.FramePadding;
         style.FramePadding = Vector2.Zero;
 
-        ImGui.PushID(id);
-        bool buttonClicked = ImGui.ImageButton(handle, size, uv0, uv1);
+        if (id == null)
+        {
+            return false;
+        }
+
+        //https://xkcd.com/2347/
+        ImGui.PushID(id + "literally anything");
+        //https://xkcd.com/2347/
+
+        bool buttonClicked = ImGui.ImageButton(handle.Handle, size, uv0, uv1);
         ImGui.PopID();
         if (ImGui.IsItemHovered())
         {
@@ -334,7 +372,10 @@ internal static class ImGuiHelper
         bool buttonClicked = false;
         DrawItemMiddle(() =>
         {
-            buttonClicked = NoPaddingNoColorImageButton(texture.ImGuiHandle, size, id);
+            if (texture?.Handle != null)
+            {
+                buttonClicked = NoPaddingNoColorImageButton(texture, size, id);
+            }
         }, wholeWidth, size.X);
         return buttonClicked;
     }
@@ -345,13 +386,13 @@ internal static class ImGuiHelper
 
     internal static void TextShade(Vector2 pos, string text, float width = 1.5f)
     {
-        Vector2[] offsets = new Vector2[]
-        {
+        Vector2[] offsets =
+        [
             new(0, -width),
             new(0, width),
             new(-width, 0),
             new(width, 0)
-        };
+        ];
 
         ImDrawListPtr drawList = ImGui.GetWindowDrawList();
         foreach (Vector2 offset in offsets)
@@ -367,19 +408,19 @@ internal static class ImGuiHelper
 
         if (percent < 0)
         {
-            if (IconSet.GetTexture("ui/uld/icona_frame_hr1.tex", out IDalamudTextureWrap? cover))
+            if (IconSet.GetTexture("ui/uld/icona_frame_hr1.tex", out IDalamudTextureWrap? cover) && cover?.Handle != null)
             {
                 ImGui.SetCursorPos(cursor - new Vector2(pixPerUnit * 3, pixPerUnit * 4));
 
                 Vector2 start = new(((96f * 0) + 4f) / cover.Width, 96f * 2 / cover.Height);
 
-                ImGui.Image(cover.ImGuiHandle, new Vector2(pixPerUnit * 88, pixPerUnit * 94),
+                ImGui.Image(cover.Handle, new Vector2(pixPerUnit * 88, pixPerUnit * 94),
                     start, start + new Vector2(88f / cover.Width, 94f / cover.Height));
             }
         }
         else if (percent < 1)
         {
-            if (IconSet.GetTexture("ui/uld/icona_recast_hr1.tex", out IDalamudTextureWrap? cover))
+            if (IconSet.GetTexture("ui/uld/icona_recast_hr1.tex", out IDalamudTextureWrap? cover) && cover?.Handle != null)
             {
                 ImGui.SetCursorPos(cursor - new Vector2(pixPerUnit * 3, pixPerUnit * 0));
 
@@ -388,17 +429,17 @@ internal static class ImGuiHelper
                 Vector2 step = new(88f / cover.Width, 96f / cover.Height);
                 Vector2 start = new(P % 9 * step.X, P / 9 * step.Y);
 
-                ImGui.Image(cover.ImGuiHandle, new Vector2(pixPerUnit * 88, pixPerUnit * 94),
+                ImGui.Image(cover.Handle, new Vector2(pixPerUnit * 88, pixPerUnit * 94),
                     start, start + new Vector2(88f / cover.Width, 94f / cover.Height));
             }
         }
         else
         {
-            if (IconSet.GetTexture("ui/uld/icona_frame_hr1.tex", out IDalamudTextureWrap? cover))
+            if (IconSet.GetTexture("ui/uld/icona_frame_hr1.tex", out IDalamudTextureWrap? cover) && cover?.Handle != null)
             {
                 ImGui.SetCursorPos(cursor - new Vector2(pixPerUnit * 3, pixPerUnit * 4));
 
-                ImGui.Image(cover.ImGuiHandle, new Vector2(pixPerUnit * 88, pixPerUnit * 94),
+                ImGui.Image(cover.Handle, new Vector2(pixPerUnit * 88, pixPerUnit * 94),
                     new Vector2(4f / cover.Width, 0f / cover.Height),
                     new Vector2(92f / cover.Width, 94f / cover.Height));
             }
@@ -406,7 +447,7 @@ internal static class ImGuiHelper
 
         if (percent > 1)
         {
-            if (IconSet.GetTexture("ui/uld/icona_recast2_hr1.tex", out IDalamudTextureWrap? cover))
+            if (IconSet.GetTexture("ui/uld/icona_recast2_hr1.tex", out IDalamudTextureWrap? cover) && cover?.Handle != null)
             {
                 ImGui.SetCursorPos(cursor - new Vector2(pixPerUnit * 3, pixPerUnit * 0));
 
@@ -415,7 +456,7 @@ internal static class ImGuiHelper
                 Vector2 step = new(88f / cover.Width, 96f / cover.Height);
                 Vector2 start = new(((P % 9) + 9) * step.X, P / 9 * step.Y);
 
-                ImGui.Image(cover.ImGuiHandle, new Vector2(pixPerUnit * 88, pixPerUnit * 94),
+                ImGui.Image(cover.Handle, new Vector2(pixPerUnit * 88, pixPerUnit * 94),
                     start, start + new Vector2(88f / cover.Width, 94f / cover.Height));
             }
         }

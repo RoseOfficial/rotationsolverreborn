@@ -1,4 +1,4 @@
-﻿using Lumina.Excel.GeneratedSheets;
+using Lumina.Excel.Sheets;
 
 namespace RotationSolver.GameData.Getters.Actions;
 
@@ -18,14 +18,15 @@ internal class ActionSingleRotationGetter(Lumina.GameData gameData, ClassJob job
     /// </summary>
     /// <param name="item">The action item to check.</param>
     /// <returns>True if the action is added; otherwise, false.</returns>
-    protected override bool AddToList(Lumina.Excel.GeneratedSheets.Action item)
+protected override bool AddToList(Lumina.Excel.Sheets.Action item)
     {
         if (!base.AddToList(item)) return false;
 
+        if (!item.ClassJobCategory.IsValid) return false;
         var category = item.ClassJobCategory.Value;
-        if (category == null || !category.IsSingleJobForCombat()) return false;
+        if (!category.IsSingleJobForCombat()) return false;
 
-        var jobName = job.Abbreviation.RawString;
+        var jobName = job.Abbreviation.ToString();
         return (bool?)category.GetType().GetRuntimeProperty(jobName)?.GetValue(category) ?? false;
     }
 }
@@ -41,9 +42,9 @@ internal abstract class ActionMultiRotationGetter(Lumina.GameData gameData)
     /// </summary>
     /// <param name="action">The action to check.</param>
     /// <returns>True if the action is a duty action; otherwise, false.</returns>
-    protected static bool IsADutyAction(Lumina.Excel.GeneratedSheets.Action action)
+protected static bool IsADutyAction(Lumina.Excel.Sheets.Action action)
     {
-        return !action.IsRoleAction && !action.IsPvP && action.ActionCategory.Row
+        return !action.IsRoleAction && !action.IsPvP && action.ActionCategory.RowId
             is not 10 and not 11 // Not System
             and not 9 and not 15; // Not LB.
     }
@@ -53,12 +54,13 @@ internal abstract class ActionMultiRotationGetter(Lumina.GameData gameData)
     /// </summary>
     /// <param name="item">The action item to check.</param>
     /// <returns>True if the action is added; otherwise, false.</returns>
-    protected override bool AddToList(Lumina.Excel.GeneratedSheets.Action item)
+protected override bool AddToList(Lumina.Excel.Sheets.Action item)
     {
         if (!base.AddToList(item)) return false;
 
+        if (!item.ClassJobCategory.IsValid) return false;
         var category = item.ClassJobCategory.Value;
-        if (category == null || category.IsSingleJobForCombat()) return false;
+        if (category.IsSingleJobForCombat()) return false;
 
         return true;
     }
@@ -80,7 +82,7 @@ internal class ActionDutyRotationGetter(Lumina.GameData gameData)
     /// </summary>
     /// <param name="item">The action item to check.</param>
     /// <returns>True if the action is added; otherwise, false.</returns>
-    protected override bool AddToList(Lumina.Excel.GeneratedSheets.Action item)
+protected override bool AddToList(Lumina.Excel.Sheets.Action item)
     {
         if (!base.AddToList(item)) return false;
         return IsADutyAction(item);
@@ -103,7 +105,7 @@ internal class ActionRoleRotationGetter(Lumina.GameData gameData)
     /// </summary>
     /// <param name="item">The action item to check.</param>
     /// <returns>True if the action is added; otherwise, false.</returns>
-    protected override bool AddToList(Lumina.Excel.GeneratedSheets.Action item)
+protected override bool AddToList(Lumina.Excel.Sheets.Action item)
     {
         if (!base.AddToList(item)) return false;
         return !IsADutyAction(item);

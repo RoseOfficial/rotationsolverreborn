@@ -52,7 +52,7 @@ internal class OverlayWindow : Window
             if (HotbarHighlightManager._drawingElements2D != null)
             {
                 ImDrawListPtr drawList = ImGui.GetWindowDrawList();
-                if (drawList.NativePtr == null)
+                if (drawList.Handle == null)
                 {
                     PluginLog.Warning($"{nameof(OverlayWindow)}: Window draw list is null.");
                     return;

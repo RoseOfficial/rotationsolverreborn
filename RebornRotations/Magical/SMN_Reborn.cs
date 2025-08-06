@@ -3,9 +3,9 @@ using System.ComponentModel;
 
 namespace RebornRotations.Magical;
 
-[Rotation("Reborn", CombatType.PvE, GameVersion = "7.25")]
+[Rotation("Reborn", CombatType.PvE, GameVersion = "7.3")]
 [SourceCode(Path = "main/RebornRotations/Magical/SMN_Reborn.cs")]
-[Api(5)]
+[Api(6)]
 public sealed class SMN_Reborn : SummonerRotation
 {
     #region Config Options

@@ -1,8 +1,8 @@
 namespace RebornRotations.PVPRotations.Magical;
 
-[Rotation("Default PvP", CombatType.PvP, GameVersion = "7.25")]
+[Rotation("Default PvP", CombatType.PvP, GameVersion = "7.3")]
 [SourceCode(Path = "main/RebornRotations/PVPRotations/Magical/PCT_Default.PVP.cs")]
-[Api(5)]
+[Api(6)]
 public class PCT_DefaultPvP : PictomancerRotation
 {
     #region Configurations

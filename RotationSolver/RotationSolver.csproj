@@ -1,4 +1,4 @@
-﻿<Project Sdk="Dalamud.NET.Sdk/12.0.2">
+﻿<Project Sdk="Dalamud.NET.Sdk/13.0.0">
   <PropertyGroup>
 	  <Description>Based on the pve combat information in one frame, find the best action.</Description>
 	  <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -15,7 +15,7 @@
 	<NoWarn>1591</NoWarn>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="ECommons" Version="3.0.0.7" />
+    <PackageReference Include="ECommons" Version="3.0.0.14-api13" />
   </ItemGroup>
   <ItemGroup>
 	  <Reference Include="Dalamud.Common">
@@ -38,7 +38,11 @@
 		<Using Include="RotationSolver.Basic.Rotations.Basic" />
 		<Using Include="Dalamud.Game.ClientState.JobGauge.Enums" />
 		<Using Include="Dalamud.Interface" />
-		<Using Include="ImGuiNET" />
+		<Using Include="Dalamud.Bindings.ImGui" />
 		<Using Include="Newtonsoft.Json" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <PackageReference Update="DalamudPackager" Version="13.0.0" />
 	</ItemGroup>
 </Project>

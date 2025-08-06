@@ -1,4 +1,4 @@
-﻿using Lumina.Excel.GeneratedSheets;
+using Lumina.Excel.Sheets;
 
 namespace RotationSolver.GameData.Getters;
 
@@ -29,7 +29,7 @@ internal class ItemGetter(Lumina.GameData gameData)
     /// <returns>True if the item should be added; otherwise, false.</returns>
     protected override bool AddToList(Item item)
     {
-        if (item.ItemSearchCategory.Row != 43) return false;
+        if (item.ItemSearchCategory.RowId != 43) return false;
         if (item.FilterGroup is not 10 and not 16 and not 19) return false;
 
         return true;
@@ -42,7 +42,7 @@ internal class ItemGetter(Lumina.GameData gameData)
     /// <returns>The code representation of the item.</returns>
     protected override string ToCode(Item item)
     {
-        var name = item.Singular.RawString.ToPascalCase();
+        var name = item.Singular.ToString().ToPascalCase();
         if (AddedNames.Contains(name))
         {
             name += $"_{item.RowId}";
@@ -52,10 +52,14 @@ internal class ItemGetter(Lumina.GameData gameData)
             AddedNames.Add(name);
         }
 
-        var desc = item.Description.RawString ?? string.Empty;
+        var desc = item.Description.ToString() ?? string.Empty;
+        
+        // Sanitize the description to remove invalid XML tags
+        desc = Util.SanitizeXmlDescription(desc);
+        
         desc = $"<para>{desc.Replace("\n", "</para>\n/// <para>")}</para>";
 
-        var descName = $"<see href=\"https://garlandtools.org/db/#item/{item.RowId}\"><strong>{item.Name.RawString}</strong></see> [{item.RowId}]";
+        var descName = $"<see href=\"https://garlandtools.org/db/#item/{item.RowId}\"><strong>{item.Name.ToString()}</strong></see> [{item.RowId}]";
 
         return $$"""
         private readonly Lazy<IBaseItem> _{{name}}Creator = new(() => new BaseItem({{item.RowId}}));

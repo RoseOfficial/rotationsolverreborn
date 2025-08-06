@@ -32,13 +32,9 @@
             <HintPath>$(DalamudLibPath)Dalamud.dll</HintPath>
             <Private>False</Private>
         </Reference>
-        <Reference Include="ImGui.NET">
-            <HintPath>$(DalamudLibPath)ImGui.NET.dll</HintPath>
-            <Private>False</Private>
-        </Reference>
-        <Reference Include="ImGuiScene">
-            <HintPath>$(DalamudLibPath)ImGuiScene.dll</HintPath>
-            <Private>False</Private>
+	<Reference Include="Dalamud.Bindings.ImGui">
+            <HintPath>$(DalamudLibPath)Dalamud.Bindings.ImGui.dll</HintPath>
+            <Private>false</Private>
         </Reference>
         <Reference Include="InteropGenerator.Runtime">
             <HintPath>$(DalamudLibPath)InteropGenerator.Runtime.dll</HintPath>
@@ -76,12 +72,12 @@
         <Using Include="RotationSolver.Basic.Rotations.Basic" />
         <Using Include="Dalamud.Game.ClientState.JobGauge.Enums" />
         <Using Include="Dalamud.Interface" />
-        <Using Include="ImGuiNET" />
+        <Using Include="Dalamud.Bindings.ImGui" />
         <Using Include="Newtonsoft.Json" />
 
-        <PackageReference Include="ECommons" Version="3.0.0.7" />
+        <PackageReference Include="ECommons" Version="3.0.0.14-api13" />
 
-        <PackageReference Include="System.Drawing.Common" Version="9.0.7" />
+        <PackageReference Include="System.Drawing.Common" Version="9.0.8" />
         <ProjectReference Include="..\RotationSolver.SourceGenerators\RotationSolver.SourceGenerators.csproj" OutputItemType="Analyzer" ExcludeAssets="All" />
 
         <None Include="..\COPYING.LESSER">
