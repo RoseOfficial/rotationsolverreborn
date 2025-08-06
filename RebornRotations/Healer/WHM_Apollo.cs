@@ -571,16 +571,63 @@ public sealed class WHM_Apollo : WhiteMageRotation
             return true;
         }
 
-        // Priority 5: Proactive lily usage for healing when enabled
-        if (EnableProactiveHealing && ShouldHealProactively(out IBattleChara? proactiveHealTarget) && Lily > 0)
+        // Priority 5: Proactive healing with custom thresholds (independent of global system)
+        if (EnableProactiveHealing)
         {
-            if (UseLily(out act))
+            // Check for proactive healing targets using our custom thresholds
+            if (ShouldHealProactively(out IBattleChara? proactiveHealTarget))
+            {
+                // Use lily spells first for proactive healing
+                if (Lily > 0 && AfflatusSolacePvE.CanUse(out act))
+                {
+                    return true;
+                }
+                
+                // Use regular healing spells if needed and available
+                if (CureIiPvE.CanUse(out act))
+                {
+                    return true;
+                }
+                
+                if (CurePvE.CanUse(out act))
+                {
+                    return true;
+                }
+            }
+            
+            // Apply proactive Regen separately
+            if (ShouldApplyProactiveRegen(out IBattleChara? regenTarget) && 
+                RegenPvE.CanUse(out act, skipStatusProvideCheck: true))
             {
                 return true;
             }
         }
+        
+        // Priority 5a: Emergency healing regardless of proactive setting
+        foreach (IBattleChara member in PartyMembers)
+        {
+            if (!member.IsDead && member.GetHealthRatio() < BenedictionHeal)
+            {
+                // Critical health - use lily healing if available
+                if (Lily > 0 && AfflatusSolacePvE.CanUse(out act))
+                {
+                    return true;
+                }
+                
+                // Use regular heals for critical targets
+                if (CureIiPvE.CanUse(out act))
+                {
+                    return true;
+                }
+                
+                if (CurePvE.CanUse(out act))
+                {
+                    return true;
+                }
+            }
+        }
 
-        // Priority 6: Lily management when nearly full/overcapping
+        // Priority 6: Lily management when nearly full/overcapping (unchanged logic)
         bool liliesNearlyFull = Lily == 2 && LilyTime < LilyOvercapTime;
         bool liliesFullNoBlood = Lily == 3;
         if (UseLilyWhenFull && (liliesNearlyFull || liliesFullNoBlood) && AfflatusMiseryPvE.EnoughLevel && BloodLily < 3)

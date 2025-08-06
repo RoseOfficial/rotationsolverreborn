@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
 	  <AssemblyName>$(MSBuildProjectName)</AssemblyName>
+	  <UseTargetFrameworkFolder>false</UseTargetFrameworkFolder>
   </PropertyGroup>
 	<PropertyGroup Condition="'$(OS)' == 'Windows_NT'">
 		<DalamudLibPath>$(AppData)\XIVLauncher\addon\Hooks\dev\</DalamudLibPath>
