@@ -187,7 +187,7 @@ public partial class BlackMageRotation
 
     #region Debug
     /// <inheritdoc/>
-    public override void DisplayStatus()
+    public override void DisplayBaseStatus()
     {
         ImGui.Text("Is next GCD be instant: " + NextGCDisInstant.ToString());
         ImGui.Text("Can next GCD be instant: " + CanMakeInstant.ToString());

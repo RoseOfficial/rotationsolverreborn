@@ -10,6 +10,8 @@ internal class NextActionWindow : Window
 {
     private const ImGuiWindowFlags BaseFlags = ControlWindow.BaseFlags
     | ImGuiWindowFlags.AlwaysAutoResize
+    | ImGuiWindowFlags.NoCollapse
+    | ImGuiWindowFlags.NoTitleBar
     | ImGuiWindowFlags.NoResize;
 
     public NextActionWindow()

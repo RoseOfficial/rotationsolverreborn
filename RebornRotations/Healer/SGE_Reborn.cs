@@ -1,5 +1,3 @@
-using Dalamud.Interface.Colors;
-
 namespace RebornRotations.Healer;
 
 [Rotation("Reborn", CombatType.PvE, GameVersion = "7.3")]
@@ -10,6 +8,9 @@ public sealed class SGE_Reborn : SageRotation
     #region Config Options
     [RotationConfig(CombatType.PvE, Name = "Use Eukrasia Action to heal")]
     public bool EukrasiaActionHeal { get; set; } = false;
+
+    [RotationConfig(CombatType.PvE, Name = "Attempt to prevent bricking by allowing E.Prog at the end of GCD logic (experimental)")]
+    public bool AntiBrick { get; set; } = false;
 
     [RotationConfig(CombatType.PvE, Name = "Use Eukrasia when out of combat")]
     public bool OOCEukrasia { get; set; } = true;
@@ -75,13 +76,10 @@ public sealed class SGE_Reborn : SageRotation
 
     #region Tracking Properties
     private IBaseAction? _lastEukrasiaActionAim = null;
-    public override void DisplayStatus()
+    public override void DisplayRotationStatus()
     {
-        ImGui.TextColored(ImGuiColors.DalamudViolet, "Rotation Tracking:");
         ImGui.Text($"Last E.Action Aim Cleared From Queue: {_lastEukrasiaActionAim}");
         ImGui.Text($"Current E.Action Aim: {_EukrasiaActionAim}");
-        ImGui.TextColored(ImGuiColors.DalamudViolet, "Base Tracking:");
-        base.DisplayStatus();
     }
     #endregion
 
@@ -235,7 +233,7 @@ public sealed class SGE_Reborn : SageRotation
     [RotationDesc(ActionID.KeracholePvE, ActionID.PhysisPvE, ActionID.HolosPvE, ActionID.IxocholePvE)]
     protected override bool HealAreaAbility(IAction nextGCD, out IAction? act)
     {
-        if ((!MergedStatus.HasFlag(AutoStatus.DefenseArea) || !MergedStatus.HasFlag(AutoStatus.DefenseSingle)) && PepsisPvE.CanUse(out act))
+        if (!MergedStatus.HasFlag(AutoStatus.DefenseArea) && !MergedStatus.HasFlag(AutoStatus.DefenseSingle) && PepsisPvE.CanUse(out act))
         {
             return true;
         }
@@ -487,7 +485,7 @@ public sealed class SGE_Reborn : SageRotation
     {
         act = null;
 
-        if (_EukrasiaActionAim != null && (_EukrasiaActionAim == EukrasianPrognosisPvE || _EukrasiaActionAim == EukrasianPrognosisIiPvE) && _EukrasiaActionAim.CanUse(out _))
+        if (_EukrasiaActionAim != null && (_EukrasiaActionAim == EukrasianPrognosisPvE || _EukrasiaActionAim == EukrasianPrognosisIiPvE) && EukrasianPrognosisIiPvE.CanUse(out _))
         {
             if (EukrasiaPvE.CanUse(out act))
             {
@@ -505,7 +503,7 @@ public sealed class SGE_Reborn : SageRotation
     {
         act = null;
 
-        if (_EukrasiaActionAim != null && _EukrasiaActionAim == EukrasianDiagnosisPvE && _EukrasiaActionAim.CanUse(out _))
+        if (_EukrasiaActionAim != null && _EukrasiaActionAim == EukrasianDiagnosisPvE && EukrasianDiagnosisPvE.CanUse(out _))
         {
             if (EukrasiaPvE.CanUse(out act))
             {
@@ -523,7 +521,7 @@ public sealed class SGE_Reborn : SageRotation
     {
         act = null;
 
-        if (_EukrasiaActionAim != null && _EukrasiaActionAim == EukrasianDyskrasiaPvE && _EukrasiaActionAim.CanUse(out _))
+        if (_EukrasiaActionAim != null && _EukrasiaActionAim == EukrasianDyskrasiaPvE && EukrasianDyskrasiaPvE.CanUse(out _))
         {
             if (EukrasiaPvE.CanUse(out act))
             {
@@ -710,9 +708,13 @@ public sealed class SGE_Reborn : SageRotation
             return true;
         }
 
-        if (InCombat && HasHostilesInRange && HasEukrasia)
+        // fallback
+        if (AntiBrick && InCombat && HasHostilesInRange && HasEukrasia)
         {
-            ClearEukrasia();
+            if (EukrasianPrognosisPvE.CanUse(out act))
+            {
+                return true;
+            }
         }
 
         return base.GeneralGCD(out act);

@@ -3,16 +3,12 @@ namespace RotationSolver.GameData.Getters.Actions;
 /// <summary>
 /// Abstract base class for getting action rotation rows from the Excel sheet.
 /// </summary>
-internal abstract class ActionRotationGetterBase : ActionGetterBase
+/// <remarks>
+/// Initializes a new instance of the <see cref="ActionRotationGetterBase"/> class.
+/// </remarks>
+/// <param name="gameData">The game data.</param>
+internal abstract class ActionRotationGetterBase(Lumina.GameData gameData) : ActionGetterBase(gameData)
 {
-    /// <summary>
-    /// Initializes a new instance of the <see cref="ActionRotationGetterBase"/> class.
-    /// </summary>
-    /// <param name="gameData">The game data.</param>
-    protected ActionRotationGetterBase(Lumina.GameData gameData)
-        : base(gameData)
-    {
-    }
 
     /// <summary>
     /// Converts the specified action item to its code representation.

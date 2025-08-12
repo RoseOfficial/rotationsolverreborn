@@ -25,17 +25,14 @@ public sealed class DNC_Reborn : DancerRotation
     private static bool InBurstStatus => Player.HasStatus(true, StatusID.Devilment);
 
     #region Tracking Properties
-    public override void DisplayStatus()
+    public override void DisplayRotationStatus()
     {
-        ImGui.TextColored(ImGuiColors.DalamudViolet, "Rotation Tracking:");
         ImGui.Text("InBurstStatus: " + InBurstStatus.ToString());
         ImGui.Text("ShouldUseLastDance Logic: " + shouldUseLastDance.ToString());
         ImGui.Text($"UseStandardStep Logic: {UseStandardStep(out _)}");
         ImGui.Text($"UseClosedPosition Logic: {UseClosedPosition(out _)}");
         ImGui.Text($"FinishTheDance Logic: {FinishTheDance(out _)}");
         ImGui.Text($"HandleTillana Logic: {HandleTillana(out _)}");
-        ImGui.TextColored(ImGuiColors.DalamudYellow, "Base Tracking:");
-        base.DisplayStatus();
     }
     #endregion
 

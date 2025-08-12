@@ -223,7 +223,7 @@ public partial class MonkRotation
     #region Draw Debug
 
     /// <inheritdoc/>
-    public override void DisplayStatus()
+    public override void DisplayBaseStatus()
     {
         ImGui.Text($"BeastChakrasAllSame: {BeastChakrasAllSame()}");
         ImGui.Text($"BeastChakrasContains(BeastChakra.None): {BeastChakrasContains(BeastChakra.None)}");

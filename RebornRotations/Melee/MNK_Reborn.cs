@@ -1,4 +1,3 @@
-using Dalamud.Interface.Colors;
 using System.ComponentModel;
 
 namespace RebornRotations.Melee;
@@ -45,15 +44,6 @@ public sealed class MNK_Reborn : MonkRotation
 
     [RotationConfig(CombatType.PvE, Name = "Use Riddle of Fire after this ability")]
     public RiddleOfFireFirst ROFFirst { get; set; } = RiddleOfFireFirst.Brotherhood;
-    #endregion
-
-    #region Tracking Properties
-    public override void DisplayStatus()
-    {
-        ImGui.TextColored(ImGuiColors.DalamudViolet, "Rotation Tracking:");
-        ImGui.TextColored(ImGuiColors.DalamudYellow, "Base Tracking:");
-        base.DisplayStatus();
-    }
     #endregion
 
     #region Countdown Logic

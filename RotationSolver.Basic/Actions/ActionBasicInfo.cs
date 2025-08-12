@@ -155,6 +155,26 @@ public readonly struct ActionBasicInfo
     public bool IsLimitBreak { get; }
 
     /// <summary>
+    /// Determines whether the action is a PvP limit break action.
+    /// </summary>
+    public bool IsPvPLimitBreak { get; }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public bool IsMountAction { get; }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public bool IsSpecialAction { get; }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public bool IsSystemAction { get; }
+
+    /// <summary>
     /// Determines whether the action is a general global cooldown (GCD) action.
     /// </summary>
     public bool IsGeneralGCD { get; }
@@ -180,7 +200,15 @@ public readonly struct ActionBasicInfo
         IsGeneralGCD = _action.Action.IsGeneralGCD();
         IsRealGCD = _action.Action.IsRealGCD();
         IsLimitBreak = (ActionCate?)_action.Action.ActionCategory.Value.RowId
-            is ActionCate.LimitBreak or ActionCate.LimitBreak_15;
+            is ActionCate.LimitBreak;
+        IsPvPLimitBreak = (ActionCate?)_action.Action.ActionCategory.Value.RowId
+            is ActionCate.LimitBreak_15;
+        IsMountAction = (ActionCate?)_action.Action.ActionCategory.Value.RowId
+            is ActionCate.Mount;
+        IsSpecialAction = (ActionCate?)_action.Action.ActionCategory.Value.RowId
+            is ActionCate.Special;
+        IsSystemAction = (ActionCate?)_action.Action.ActionCategory.Value.RowId
+            is ActionCate.System or ActionCate.System_11;
         IsDutyAction = isDutyAction;
         Aspect = (Aspect)_action.Action.Aspect;
     }

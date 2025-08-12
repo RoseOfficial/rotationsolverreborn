@@ -1,6 +1,7 @@
 ﻿using ECommons.DalamudServices;
 using ECommons.ExcelServices;
 using Lumina.Excel.Sheets;
+using static FFXIVClientStructs.FFXIV.Client.UI.Agent.HudStatus;
 
 namespace RotationSolver.Basic.Rotations;
 
@@ -151,11 +152,19 @@ public partial class CustomRotation : ICustomRotation
     protected virtual void UpdateInfo() { }
 
     /// <summary>
-    /// Displays extra status information.
+    ///
     /// </summary>
-    public virtual void DisplayStatus()
+    public virtual void DisplayRotationStatus()
     {
-        ImGui.TextWrapped($"If you want to display some extra information on this panel, please override the {nameof(DisplayStatus)} method!");
+        ImGui.TextWrapped($"If you want to display some extra information on this panel, please override the {nameof(DisplayRotationStatus)} method!");
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public virtual void DisplayBaseStatus()
+    {
+        ImGui.TextWrapped($"If you want to display some extra information on this panel, please override the {nameof(DisplayBaseStatus)} method!");
     }
 
     /// <summary>

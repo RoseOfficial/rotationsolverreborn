@@ -129,7 +129,7 @@ internal static partial class Util
     /// <param name="desc">The description of the action.</param>
     /// <param name="isDuty">Indicates if the action is a duty action.</param>
     /// <returns>The generated action code.</returns>
-public static string ToCode(this Lumina.Excel.Sheets.Action item,
+    public static string ToCode(this Lumina.Excel.Sheets.Action item,
         string actionName, string actionDescName, string desc, bool isDuty)
     {
         if (isDuty)
@@ -222,7 +222,7 @@ public static string ToCode(this Lumina.Excel.Sheets.Action item,
     /// </summary>
     /// <param name="action">The action.</param>
     /// <returns>The description name of the action.</returns>
-public static string GetDescName(this Lumina.Excel.Sheets.Action action)
+    public static string GetDescName(this Lumina.Excel.Sheets.Action action)
     {
         var jobs = action.ClassJobCategory.IsValid ? action.ClassJobCategory.Value.Name.ToString() : string.Empty;
         jobs = string.IsNullOrEmpty(jobs) ? string.Empty : $" ({jobs})";

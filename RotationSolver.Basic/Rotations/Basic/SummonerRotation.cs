@@ -247,7 +247,7 @@ public partial class SummonerRotation
     #region Draw Debug
 
     /// <inheritdoc/>
-    public override void DisplayStatus()
+    public override void DisplayBaseStatus()
     {
         ImGui.Text("ReturnSummons: " + ReturnSummons.ToString());
         ImGui.Text("HasAetherflowStacks: " + HasAetherflowStacks.ToString());

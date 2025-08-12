@@ -270,22 +270,31 @@ internal static class DataCenter
         }
     }
 
+    private static float _cachedJobRange = -1f;
+    private static int _cachedTargetCount = 0;
+    private static int _lastTargetFrame = -1;
+
     public static bool MobsTime
     {
         get
         {
-            float jobRange = JobRange;
-            int count = 0;
-            var targets = AllHostileTargets;
-            for (int i = 0, n = targets.Count; i < n; i++)
+            int currentFrame = Environment.TickCount;
+            if (_lastTargetFrame != currentFrame)
             {
-                var o = targets[i];
-                if (o.DistanceToPlayer() < jobRange && o.CanSee())
+                _cachedJobRange = JobRange;
+                _cachedTargetCount = 0;
+                var targets = AllHostileTargets;
+                for (int i = 0, n = targets.Count; i < n; i++)
                 {
-                    count++;
+                    var o = targets[i];
+                    if (o.DistanceToPlayer() < _cachedJobRange && o.CanSee())
+                    {
+                        _cachedTargetCount++;
+                    }
                 }
+                _lastTargetFrame = currentFrame;
             }
-            return count >= Service.Config.AutoDefenseNumber;
+            return _cachedTargetCount >= Service.Config.AutoDefenseNumber;
         }
     }
 
@@ -675,12 +684,11 @@ internal static class DataCenter
 
     private static float GetPartyMemberHPRatio(IBattleChara member)
     {
-        if (member == null)
-        {
-            throw new ArgumentNullException(nameof(member));
-        }
+        ArgumentNullException.ThrowIfNull(member);
 
-        if (!DataCenter.InEffectTime || !DataCenter.HealHP.TryGetValue(member.GameObjectId, out uint healedHp))
+        if (member.MaxHp == 0) return 0f;
+
+        if (!InEffectTime || !HealHP.TryGetValue(member.GameObjectId, out uint healedHp))
         {
             return (float)member.CurrentHp / member.MaxHp;
         }
@@ -692,7 +700,7 @@ internal static class DataCenter
 
             if (currentHp - lastHp == healedHp)
             {
-                _ = DataCenter.HealHP.Remove(member.GameObjectId);
+                _ = HealHP.Remove(member.GameObjectId);
                 return (float)currentHp / member.MaxHp;
             }
 
@@ -708,54 +716,58 @@ internal static class DataCenter
     private static float _partyStdDevHp = 0;
     private static int _partyHpCount = 0;
 
+    private static readonly float[] _hpBuffer = new float[8];
     private static void UpdatePartyHpCache()
     {
         int currentFrame = Environment.TickCount;
         if (_partyHpCacheFrame == currentFrame)
             return;
 
-        var hps = new List<float>();
+        int hpCount = 0;
         foreach (var member in PartyMembers)
         {
-            try
+            if (member.GameObjectId != 0 && hpCount < _hpBuffer.Length)
             {
-                if (member == null || member.GameObjectId == 0) continue;
-                float hp = GetPartyMemberHPRatio(member);
-                if (hp > 0) hps.Add(hp);
-            }
-            catch (AccessViolationException ex)
-            {
-                PluginLog.Error($"AccessViolationException in Party HP cache: {ex.Message}");
+                try
+                {
+                    float hp = GetPartyMemberHPRatio(member);
+                    if (hp > 0) _hpBuffer[hpCount++] = hp;
+                }
+                catch (AccessViolationException ex)
+                {
+                    PluginLog.Error($"AccessViolationException in Party HP cache: {ex.Message}");
+                }
             }
         }
 
-        _partyHpCount = hps.Count;
-        if (_partyHpCount == 0)
+        _partyHpCount = hpCount;
+        if (hpCount == 0)
         {
             _partyMinHp = 0;
             _partyAvgHp = 0;
             _partyStdDevHp = 0;
+            return;
         }
-        else
+
+        float sum = 0;
+        float min = float.MaxValue;
+        for (int i = 0; i < hpCount; i++)
         {
-            float sum = 0;
-            float min = float.MaxValue;
-            foreach (var hp in hps)
-            {
-                sum += hp;
-                if (hp < min) min = hp;
-            }
-            float avg = sum / _partyHpCount;
-            float variance = 0;
-            foreach (var hp in hps)
-            {
-                float diff = hp - avg;
-                variance += diff * diff;
-            }
-            _partyMinHp = min;
-            _partyAvgHp = avg;
-            _partyStdDevHp = (float)Math.Sqrt(variance / _partyHpCount);
+            sum += _hpBuffer[i];
+            if (_hpBuffer[i] < min) min = _hpBuffer[i];
         }
+
+        float avg = sum / hpCount;
+        float variance = 0;
+        for (int i = 0; i < hpCount; i++)
+        {
+            float diff = _hpBuffer[i] - avg;
+            variance += diff * diff;
+        }
+
+        _partyMinHp = min;
+        _partyAvgHp = avg;
+        _partyStdDevHp = (float)Math.Sqrt(variance / hpCount);
         _partyHpCacheFrame = currentFrame;
     }
 

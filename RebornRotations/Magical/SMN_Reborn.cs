@@ -1,5 +1,4 @@
-﻿using Dalamud.Interface.Colors;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 
 namespace RebornRotations.Magical;
 
@@ -55,12 +54,9 @@ public sealed class SMN_Reborn : SummonerRotation
     #endregion
 
     #region Tracking Properties
-    public override void DisplayStatus()
+    public override void DisplayRotationStatus()
     {
-        ImGui.TextColored(ImGuiColors.DalamudViolet, "Rotation Tracking:");
         ImGui.Text($"EnergyDrainPvE: Is Cooling Down: {EnergyDrainPvE.Cooldown.IsCoolingDown}");
-        ImGui.TextColored(ImGuiColors.DalamudYellow, "Base Tracking:");
-        base.DisplayStatus();
     }
     #endregion
 

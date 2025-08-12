@@ -227,7 +227,7 @@ public partial class SamuraiRotation
 
     #region Debug
     /// <inheritdoc/>
-    public override void DisplayStatus()
+    public override void DisplayBaseStatus()
     {
         ImGui.Text("HasSetsu: " + HasSetsu.ToString());
         ImGui.Text("HasGetsu: " + HasGetsu.ToString());

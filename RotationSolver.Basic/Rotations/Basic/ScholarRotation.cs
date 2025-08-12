@@ -73,7 +73,7 @@ public partial class ScholarRotation
     #region Debug
 
     /// <inheritdoc/>
-    public override void DisplayStatus()
+    public override void DisplayBaseStatus()
     {
         ImGui.Text("FairyGauge: " + FairyGauge.ToString());
         ImGui.Text("HasAetherflow: " + HasAetherflow.ToString());

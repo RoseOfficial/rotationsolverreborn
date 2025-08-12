@@ -99,7 +99,7 @@ public partial class BardRotation
     #region Draw Debug
 
     /// <inheritdoc/>
-    public override void DisplayStatus()
+    public override void DisplayBaseStatus()
     {
         ImGui.Text("Repertoire: " + Repertoire.ToString());
         ImGui.Text("Song: " + Song.ToString());

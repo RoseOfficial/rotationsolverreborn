@@ -106,9 +106,9 @@ public sealed class PhantomDefault : PhantomRotation
     readonly HashSet<IBaseAction> _remainingCards = new(4);
     private IBaseAction? _currentCard = null;
 
-    public override void DisplayStatus()
+    public override void DisplayDutyStatus()
     {
-        base.DisplayStatus();
+        base.DisplayDutyStatus();
         if (string.Equals(ActivePhantomJob, "Oracle", StringComparison.OrdinalIgnoreCase))
         {
             ImGui.Text($"Remaining Cards: {_remainingCards.Count}");

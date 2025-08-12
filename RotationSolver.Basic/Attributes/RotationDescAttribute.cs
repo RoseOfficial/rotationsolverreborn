@@ -19,7 +19,7 @@ public class RotationDescAttribute : Attribute
     /// <summary>
     /// What actions this linked.
     /// </summary>
-    public IEnumerable<ActionID> Actions { get; private set; } = Enumerable.Empty<ActionID>();
+    public IEnumerable<ActionID> Actions { get; private set; } = [];
 
     internal uint IconID => Type switch
     {

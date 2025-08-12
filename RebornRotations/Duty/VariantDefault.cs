@@ -6,7 +6,7 @@ namespace RebornRotations.Duty;
 
 internal class VariantDefault : VariantRotation
 {
-    public override void DisplayStatus()
+    public override void DisplayDutyStatus()
     {
         if (InVariantDungeon)
         {

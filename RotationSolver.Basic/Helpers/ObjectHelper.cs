@@ -30,6 +30,13 @@ public static class ObjectHelper
         EventHandlerContent.Quest,
     };
 
+    private static readonly ConcurrentDictionary<string, Regex> _regexCache = [];
+
+    private static Regex GetCachedRegex(string pattern)
+    {
+        return _regexCache.GetOrAdd(pattern, p => new Regex(p, RegexOptions.Compiled));
+    }
+
     internal static BNpcBase? GetObjectNPC(this IBattleChara battleChara)
     {
         return battleChara == null ? null : Service.GetSheet<Lumina.Excel.Sheets.BNpcBase>().GetRow(battleChara.DataId);
@@ -57,7 +64,7 @@ public static class ObjectHelper
         {
             foreach (string n in ns1)
             {
-                if (!string.IsNullOrEmpty(n) && new Regex(n).Match(target.Name?.GetText() ?? string.Empty).Success)
+                if (!string.IsNullOrEmpty(n) && GetCachedRegex(n).IsMatch(target.Name?.GetText() ?? string.Empty))
                 {
                     return false;
                 }
@@ -157,7 +164,7 @@ public static class ObjectHelper
         {
             foreach (string n in ns1)
             {
-                if (!string.IsNullOrEmpty(n) && new Regex(n).Match(battleChara.Name.TextValue).Success)
+                if (!string.IsNullOrEmpty(n) && GetCachedRegex(n).IsMatch(battleChara.Name.TextValue))
                 {
                     return false;
                 }
@@ -511,11 +518,21 @@ public static class ObjectHelper
 
     internal static bool IsNpcPartyMember(this IBattleChara battleChara)
     {
+        if (battleChara.IsPet())
+        {
+            return false;
+        }
+
         return battleChara.GetBattleNPCSubKind() == BattleNpcSubKind.NpcPartyMember;
     }
 
     internal static bool IsFriendlyBattleNPC(this IBattleChara battleChara)
     {
+        if (battleChara.IsPet())
+        {
+            return false;
+        }
+
         return battleChara.GetNameplateKind() == NameplateKind.FriendlyBattleNPC;
     }
 
@@ -1120,10 +1137,10 @@ public static class ObjectHelper
     {
         if (DataCenter.TerritoryID == 1292)
         {
-            StatusID CellJailerA = (StatusID)4542;
-            StatusID CellJailerB = (StatusID)4543;
-            StatusID CellJailerC = (StatusID)4544;
-            StatusID CellJailerD = (StatusID)4545;
+            StatusID CellJailerA = (StatusID)4546;
+            StatusID CellJailerB = (StatusID)4547;
+            StatusID CellJailerC = (StatusID)4548;
+            StatusID CellJailerD = (StatusID)4549;
 
             var JailerA = battleChara.HasStatus(false, CellJailerA);
             var JailerB = battleChara.HasStatus(false, CellJailerB);
@@ -1225,68 +1242,59 @@ public static class ObjectHelper
     {
         if (DataCenter.TerritoryID == 1069)
         {
-            var Drakefather = battleChara.NameId == 11463;
-            var Drakemother = battleChara.NameId == 11464;
-            var Drakebrother = battleChara.NameId == 11465;
-            var Drakesister = battleChara.NameId == 11466;
-            var Drakeling = battleChara.NameId == 11467;
+            // NameIds for each drake
+            const uint DrakefatherId = 11463;
+            const uint DrakemotherId = 11464;
+            const uint DrakebrotherId = 11465;
+            const uint DrakesisterId = 11466;
+            const uint DrakelingId = 11467;
 
-            bool DrakefatherAlive = false;
-            foreach (var obj in DataCenter.AllHostileTargets)
-            {
-                if (obj is IBattleChara x && x.NameId == 11463 && x.CurrentHp > 0)
-                {
-                    DrakefatherAlive = true;
-                    break;
-                }
-            }
-            bool DrakemotherAlive = false;
-            foreach (var obj in DataCenter.AllHostileTargets)
-            {
-                if (obj is IBattleChara x && x.NameId == 11464 && x.CurrentHp > 0)
-                {
-                    DrakemotherAlive = true;
-                    break;
-                }
-            }
-            bool DrakebrotherAlive = false;
-            foreach (var obj in DataCenter.AllHostileTargets)
-            {
-                if (obj is IBattleChara x && x.NameId == 11465 && x.CurrentHp > 0)
-                {
-                    DrakebrotherAlive = true;
-                    break;
-                }
-            }
-            bool DrakesisterAlive = false;
-            foreach (var obj in DataCenter.AllHostileTargets)
-            {
-                if (obj is IBattleChara x && x.NameId == 11466 && x.CurrentHp > 0)
-                {
-                    DrakesisterAlive = true;
-                    break;
-                }
-            }
+            var nameId = battleChara.NameId;
 
-            if (Drakemother && DrakefatherAlive)
+            // Drakemother is immune if Drakefather is alive
+            if (nameId == DrakemotherId && CheckDrakesAlive(DrakemotherId, DrakefatherId))
             {
                 return true;
             }
-            if (Drakebrother && DrakemotherAlive)
+            // Drakebrother is immune if Drakemother is alive
+            if (nameId == DrakebrotherId && CheckDrakesAlive(DrakebrotherId, DrakemotherId))
             {
                 return true;
             }
-            if (Drakesister && DrakebrotherAlive)
+            // Drakesister is immune if Drakebrother is alive
+            if (nameId == DrakesisterId && CheckDrakesAlive(DrakesisterId, DrakebrotherId))
             {
                 return true;
             }
-            if (Drakeling && DrakesisterAlive)
+            // Drakeling is immune if Drakesister is alive
+            if (nameId == DrakelingId && CheckDrakesAlive(DrakelingId, DrakesisterId))
             {
                 return true;
             }
         }
 
         return false;
+    }
+
+    private static bool CheckDrakesAlive(uint targetNameId, uint dependentNameId)
+    {
+        bool targetAlive = false;
+        bool dependentAlive = false;
+
+        var targets = DataCenter.AllHostileTargets;
+        for (int i = 0, count = targets.Count; i < count; i++)
+        {
+            var obj = targets[i];
+            if (obj?.CurrentHp > 0)
+            {
+                if (obj.NameId == targetNameId) targetAlive = true;
+                else if (obj.NameId == dependentNameId) dependentAlive = true;
+
+                if (targetAlive && dependentAlive) break;
+            }
+        }
+
+        return targetAlive && dependentAlive;
     }
 
     /// <summary>

@@ -127,7 +127,7 @@ public partial class MachinistRotation
 
     #region Debug Display
     /// <inheritdoc/>
-    public override void DisplayStatus()
+    public override void DisplayBaseStatus()
     {
         ImGui.Text("IsOverheated: " + IsOverheated.ToString());
         ImGui.Text("IsRobotActive: " + IsRobotActive.ToString());

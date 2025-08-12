@@ -1,6 +1,4 @@
-﻿using Dalamud.Interface.Colors;
-
-namespace RebornRotations.Melee;
+﻿namespace RebornRotations.Melee;
 
 [Rotation("Reborn", CombatType.PvE, GameVersion = "7.3")]
 [SourceCode(Path = "main/RebornRotations/Melee/VPR_Reborn.cs")]
@@ -51,12 +49,9 @@ public sealed class VPR_Reborn : ViperRotation
     #endregion
 
     #region Tracking Properties
-    public override void DisplayStatus()
+    public override void DisplayRotationStatus()
     {
-        ImGui.TextColored(ImGuiColors.DalamudViolet, "Rotation Tracking:");
         ImGui.Text($"No Last Combo Action: {IsNoActionCombo()}");
-        ImGui.TextColored(ImGuiColors.DalamudYellow, "Base Tracking:");
-        base.DisplayStatus();
     }
     #endregion
 

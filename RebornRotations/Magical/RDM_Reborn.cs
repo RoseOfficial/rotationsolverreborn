@@ -9,6 +9,12 @@ public sealed class RDM_Reborn : RedMageRotation
     [RotationConfig(CombatType.PvE, Name = "Use GCDs to heal. (Ignored if there are no healers alive in party)")]
     public bool GCDHeal { get; set; } = false;
 
+    [RotationConfig(CombatType.PvE, Name = "Prevent healing during burst combos")]
+    public bool PreventHeal { get; set; } = true;
+
+    [RotationConfig(CombatType.PvE, Name = "Prevent raising during burst combos")]
+    public bool PreventRaising { get; set; } = true;
+
     [RotationConfig(CombatType.PvE, Name = "Use Vercure for Dualcast when out of combat.")]
     public bool UseVercure { get; set; } = false;
 
@@ -233,6 +239,14 @@ public sealed class RDM_Reborn : RedMageRotation
     [RotationDesc(ActionID.VercurePvE)]
     protected override bool HealSingleGCD(out IAction? act)
     {
+        if (PreventHeal)
+        {
+            if (HasManafication || HasEmbolden || ManaStacks == 3 || CanMagickedSwordplay || CanGrandImpact)
+            {
+                return base.HealSingleGCD(out act);
+            }
+        }
+
         if (VercurePvE.CanUse(out act, skipStatusProvideCheck: true))
         {
             return true;
@@ -244,6 +258,14 @@ public sealed class RDM_Reborn : RedMageRotation
     [RotationDesc(ActionID.VerraisePvE)]
     protected override bool RaiseGCD(out IAction? act)
     {
+        if (PreventRaising)
+        {
+            if (HasManafication || HasEmbolden || ManaStacks == 3 || CanMagickedSwordplay || CanGrandImpact)
+            {
+                return base.RaiseGCD(out act);
+            }
+        }
+
         if (VerraisePvE.CanUse(out act))
         {
             return true;

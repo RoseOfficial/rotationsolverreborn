@@ -124,7 +124,12 @@ public interface ICustomRotation : ITexture
     /// <summary>
     /// Displays the rotation status on the window.
     /// </summary>
-    void DisplayStatus();
+    void DisplayRotationStatus();
+
+    /// <summary>
+    /// Displays the rotation status on the window.
+    /// </summary>
+    void DisplayBaseStatus();
 
     /// <summary>
     /// Occurs when the territory changes or the rotation changes.

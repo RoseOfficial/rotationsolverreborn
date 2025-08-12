@@ -23,22 +23,6 @@
     <NoWarn>1591</NoWarn>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="Duty\PVPRotations\**" />
-    <EmbeddedResource Remove="Duty\PVPRotations\**" />
-    <None Remove="Duty\PVPRotations\**" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Remove="Duty\EmanationDefault" />
-    <None Remove="Duty\VariantDefault" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Duty\EmanationDefault" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Magical\BLM_zAlpha.cs" />
-    <None Include="Tank\GNB_Reborn.cs" />
-  </ItemGroup>
-  <ItemGroup>
 	  <Reference Include="Dalamud">
 		  <HintPath>$(DalamudLibPath)Dalamud.dll</HintPath>
 		  <Private>False</Private>

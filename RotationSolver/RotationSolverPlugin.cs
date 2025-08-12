@@ -17,6 +17,7 @@ using RotationSolver.UI;
 using RotationSolver.UI.HighlightTeachingMode;
 using RotationSolver.UI.HighlightTeachingMode.ElementSpecial;
 using RotationSolver.Updaters;
+using RotationSolver.ActionTimeline;
 using WelcomeWindow = RotationSolver.UI.WelcomeWindow;
 
 namespace RotationSolver;
@@ -29,6 +30,7 @@ public sealed class RotationSolverPlugin : IDalamudPlugin, IDisposable
     private static ControlWindow? _controlWindow;
     private static NextActionWindow? _nextActionWindow;
     private static CooldownWindow? _cooldownWindow;
+    private static ActionTimelineWindow? _actionTimelineWindow;
     private static WelcomeWindow? _changelogWindow;
     private static OverlayWindow? _overlayWindow;
 
@@ -85,6 +87,7 @@ public sealed class RotationSolverPlugin : IDalamudPlugin, IDisposable
         _controlWindow = new();
         _nextActionWindow = new();
         _cooldownWindow = new();
+        _actionTimelineWindow = new();
         _changelogWindow = new();
         _overlayWindow = new();
 
@@ -93,6 +96,7 @@ public sealed class RotationSolverPlugin : IDalamudPlugin, IDisposable
         windowSystem.AddWindow(_controlWindow);
         windowSystem.AddWindow(_nextActionWindow);
         windowSystem.AddWindow(_cooldownWindow);
+        windowSystem.AddWindow(_actionTimelineWindow);
         windowSystem.AddWindow(_changelogWindow);
         windowSystem.AddWindow(_overlayWindow);
         //Notify.Success("Overlay Window was added!");
@@ -105,6 +109,7 @@ public sealed class RotationSolverPlugin : IDalamudPlugin, IDisposable
 
         MajorUpdater.Enable();
         Watcher.Enable();
+        ActionQueueManager.Enable();
         OtherConfiguration.Init();
         ActionContextMenu.Init();
         HotbarHighlightManager.Init();
@@ -136,7 +141,7 @@ public sealed class RotationSolverPlugin : IDalamudPlugin, IDisposable
             // Check if the id is valid before proceeding
             if (id == 0)
             {
-                PluginLog.Warning("Invalid territory id: 0");
+                PluginLog.Information("Invalid territory id: 0");
                 return;
             }
 
@@ -185,28 +190,27 @@ public sealed class RotationSolverPlugin : IDalamudPlugin, IDisposable
 
         ChangeUITranslation();
 
-        OpenLinkPayload = Svc.Chat.AddChatLinkHandler((guid, seString) =>
+        OpenLinkPayload = Svc.Chat.AddChatLinkHandler(0, (guid, seString) =>
         {
-            if (guid == Guid.Empty)
+            if (guid == 0)
             {
                 OpenConfigWindow();
             }
         });
-        HideWarningLinkPayload = Svc.Chat.AddChatLinkHandler((guid, seString) =>
+        HideWarningLinkPayload = Svc.Chat.AddChatLinkHandler(1, (guid, seString) =>
         {
-            if (guid == Guid.Empty)
+            if (guid == 0)
             {
                 Service.Config.HideWarning.Value = true;
                 Svc.Chat.Print("Warning has been hidden.");
             }
         });
+
+        // Load rotations on startup
         _ = Task.Run(async () =>
         {
             await DownloadHelper.DownloadAsync();
-            if (Service.Config.LoadRotationsAtStartup)
-            {
-                await RotationUpdater.GetAllCustomRotationsAsync(DownloadOption.Download);
-            }
+            await RotationUpdater.GetAllCustomRotationsAsync(DownloadOption.MustDownload | DownloadOption.ShowList);
         });
     }
 
@@ -251,6 +255,27 @@ public sealed class RotationSolverPlugin : IDalamudPlugin, IDisposable
 
         _controlWindow!.IsOpen = isValid && Service.Config.ShowControlWindow;
         _cooldownWindow!.IsOpen = isValid && Service.Config.ShowCooldownWindow;
+
+        // ActionTimeline window with additional checks
+        bool showActionTimeline = isValid && Service.Config.ShowActionTimelineWindow;
+
+        if (Service.Config.ActionTimelineOnlyWhenActive)
+        {
+            showActionTimeline &= DataCenter.IsActivated();
+        }
+
+        if (Service.Config.ActionTimelineOnlyInCombat)
+        {
+            showActionTimeline &= DataCenter.InCombat;
+        }
+
+        _actionTimelineWindow!.IsOpen = showActionTimeline;
+
+        if (showActionTimeline)
+        {
+            ActionTimelineManager.Instance.UpdateCombatState();
+        }
+
         _overlayWindow!.IsOpen = isValid && Service.Config.TeachingMode;
     }
 
@@ -275,7 +300,7 @@ public sealed class RotationSolverPlugin : IDalamudPlugin, IDisposable
     {
         RSCommands.Disable();
         Watcher.Disable();
-
+        ActionQueueManager.Disable();
         Svc.PluginInterface.UiBuilder.OpenConfigUi -= OnOpenConfigUi;
         Svc.PluginInterface.UiBuilder.Draw -= OnDraw;
 
@@ -287,6 +312,7 @@ public sealed class RotationSolverPlugin : IDalamudPlugin, IDisposable
 
         MajorUpdater.Dispose();
         HotbarHighlightManager.Dispose();
+        ActionTimelineManager.Instance.Dispose();
         await OtherConfiguration.Save();
 
         ECommonsMain.Dispose();

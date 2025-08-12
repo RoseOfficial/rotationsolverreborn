@@ -149,7 +149,7 @@ public partial class DarkKnightRotation
     #region Draw Debug
 
     /// <inheritdoc/>
-    public override void DisplayStatus()
+    public override void DisplayBaseStatus()
     {
         ImGui.Text("BloodWeaponStacks: " + BloodWeaponStacks.ToString());
         ImGui.Text("DeliriumStacks: " + DeliriumStacks.ToString());

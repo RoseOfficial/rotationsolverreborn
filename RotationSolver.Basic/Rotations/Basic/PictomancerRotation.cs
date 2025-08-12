@@ -232,7 +232,7 @@ public partial class PictomancerRotation
 
     #region Debug
     /// <inheritdoc/>
-    public override void DisplayStatus()
+    public override void DisplayBaseStatus()
     {
         ImGui.Text($"HasRainbowBright: {HasRainbowBright}");
         ImGui.Text($"PaletteGauge: {PaletteGauge}");

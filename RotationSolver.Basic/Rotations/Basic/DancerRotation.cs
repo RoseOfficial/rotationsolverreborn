@@ -168,7 +168,7 @@ public partial class DancerRotation
     #region Debug Status
 
     /// <inheritdoc/>
-    public override void DisplayStatus()
+    public override void DisplayBaseStatus()
     {
         ImGui.Text("IsDancing: " + IsDancing.ToString());
         ImGui.Text("Esprit: " + Esprit.ToString());

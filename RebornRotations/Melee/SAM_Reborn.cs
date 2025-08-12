@@ -1,5 +1,4 @@
-﻿using Dalamud.Interface.Colors;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 
 namespace RebornRotations.Melee;
 
@@ -29,15 +28,6 @@ public sealed class SAM_Reborn : SamuraiRotation
 
     [RotationConfig(CombatType.PvE, Name = "Use Hagakure or Midare/Tendo Setsugekka when going from single target to AOE scenarios")]
     public STtoAOEStrategy STtoAOE { get; set; } = STtoAOEStrategy.Hagakure;
-    #endregion
-
-    #region Tracking Properties
-    public override void DisplayStatus()
-    {
-        ImGui.TextColored(ImGuiColors.DalamudViolet, "Rotation Tracking:");
-        ImGui.TextColored(ImGuiColors.DalamudYellow, "Base Tracking:");
-        base.DisplayStatus();
-    }
     #endregion
 
     #region Countdown Logic

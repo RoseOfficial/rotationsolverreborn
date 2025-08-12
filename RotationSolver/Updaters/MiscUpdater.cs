@@ -4,6 +4,7 @@ using Dalamud.Game.Text.SeStringHandling.Payloads;
 using ECommons.DalamudServices;
 using ECommons.ExcelServices;
 using ECommons.GameHelpers;
+using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using FFXIVClientStructs.FFXIV.Client.System.Framework;
 using FFXIVClientStructs.FFXIV.Client.UI;
@@ -52,12 +53,64 @@ internal static class MiscUpdater
                     new IconPayload(icon),
                     new TextPayload(showStr)
                 );
-                _dtrEntry.OnClick = _ => RSCommands.IncrementState();
+                if (Service.Config.DtrCycle)
+                {
+                    _dtrEntry.OnClick = _ => CycleStateWithAllTargetTypes();
+                }
+                else
+                {
+                    _dtrEntry.OnClick = _ => RSCommands.IncrementState();
+                }
             }
         }
         else if (_dtrEntry != null && _dtrEntry.Shown)
         {
             _dtrEntry.Shown = false;
+        }
+    }
+
+    private static void CycleStateWithAllTargetTypes()
+    {
+        // If currently Off, start with the first TargetType
+        if (!DataCenter.State)
+        {
+            if (Service.Config.TargetingTypes.Count > 0)
+            {
+                Service.Config.TargetingIndex = 0;
+                RSCommands.DoStateCommandType(StateCommandType.Auto, 0);
+            }
+            else
+            {
+                // No targeting types configured, go to Manual
+                RSCommands.DoStateCommandType(StateCommandType.Manual);
+            }
+            return;
+        }
+
+        // If currently in Auto mode, cycle through all TargetTypes
+        if (DataCenter.State && !DataCenter.IsManual)
+        {
+            int nextIndex = Service.Config.TargetingIndex + 1;
+
+            // If we've gone through all TargetTypes, switch to Manual
+            if (nextIndex >= Service.Config.TargetingTypes.Count)
+            {
+                RSCommands.DoStateCommandType(StateCommandType.Manual);
+            }
+            else
+            {
+                // Move to next TargetType
+                Service.Config.TargetingIndex = nextIndex;
+                RSCommands.DoStateCommandType(StateCommandType.Auto, nextIndex);
+            }
+            return;
+        }
+
+        // If currently in Manual mode, turn off
+        if (DataCenter.State && DataCenter.IsManual)
+        {
+            RSCommands.DoStateCommandType(StateCommandType.Off);
+            return;
         }
     }
 

@@ -44,39 +44,114 @@ internal class RotationGetter
         var traitsCode = traitsGetter.GetCode();
 
         return $$"""
-         /// <summary>
-         /// <see href="https://na.finalfantasyxiv.com/jobguide/{{jobName?.Replace(" ", "").ToLower()}}"><strong>{{jobName}}</strong></see>
-         /// <br>Number of Actions: {{rotationsGetter.Count}}</br>
-         /// <br>Number of Traits: {{traitsGetter.Count}}</br>
-         /// </summary>
-         [Jobs({{jobs}})]
-         public abstract partial class {{GetName()}} : CustomRotation
-         {
-             {{jobGauge}}
+     /// <summary>
+     /// <see href="https://na.finalfantasyxiv.com/jobguide/{{jobName?.Replace(" ", "").ToLower()}}"><strong>{{jobName}}</strong></see>
+     /// <br>Number of Actions: {{rotationsGetter.Count}}</br>
+     /// <br>Number of Traits: {{traitsGetter.Count}}</br>
+     /// </summary>
+     [Jobs({{jobs}})]
+     public abstract partial class {{GetName()}} : CustomRotation
+     {
+         {{jobGauge}}
 
-         #region Actions
-         {{rotationsCode.Table()}}
+     #region Actions
+     {{rotationsCode.Table()}}
 
-         {{Util.ArrayNames("AllBaseActions", "IBaseAction",
+     {{Util.ArrayNames("AllBaseActions", "IBaseAction",
          "public override", [.. rotationsGetter.AddedNames]).Table()}}
 
-         {{GetLBInRotation(job.LimitBreak1.Value, 1)}}
-         {{GetLBInRotation(job.LimitBreak2.Value, 2)}}
-         {{GetLBInRotation(job.LimitBreak3.Value, 3)}}
-         {{GetLBInRotationPvP(gameData.GetExcelSheet<Lumina.Excel.Sheets.Action>()?.FirstOrDefault(i => i.ActionCategory.RowId is 15
-            && i.ClassJobCategory.IsValid && ((bool?)i.ClassJobCategory.Value.GetType().GetRuntimeProperty(job.Abbreviation.ToString())?.GetValue(i.ClassJobCategory.Value) ?? false)))}}
+     {{GetLBInRotation(job.LimitBreak1.Value, 1)}}
+     {{GetLBInRotation(job.LimitBreak2.Value, 2)}}
+     {{GetLBInRotation(job.LimitBreak3.Value, 3)}}
+     {{GetLBInRotationPvP(FindPvPLimitBreak())}}
 
-         #endregion
+     #endregion
 
-         #region Traits
-         
-         {{traitsCode.Table()}}
+     #region Traits
+     
+     {{traitsCode.Table()}}
 
-         {{Util.ArrayNames("AllTraits", "IBaseTrait",
+     {{Util.ArrayNames("AllTraits", "IBaseTrait",
          "public override", [.. traitsGetter.AddedNames]).Table()}}
-         #endregion
-         }
-         """;
+     #endregion
+     }
+     """;
+    }
+
+    /// <summary>
+    /// Finds the PvP Limit Break action for the current job.
+    /// </summary>
+    /// <returns>The PvP Limit Break action if found; otherwise, null.</returns>
+    private Lumina.Excel.Sheets.Action? FindPvPLimitBreak()
+    {
+        try
+        {
+            var actionSheet = gameData.GetExcelSheet<Lumina.Excel.Sheets.Action>();
+            if (actionSheet == null) return null;
+
+            // Get the job's class job category
+            var jobCategory = job.ClassJobCategory.Value;
+
+            // Find PvP Limit Break actions (ActionCategory.RowId == 15)
+            var pvpLimitBreaks = actionSheet.Where(action =>
+                action.ActionCategory.RowId == 15 &&
+                action.ClassJobCategory.IsValid &&
+                action.IsPvP);
+
+            // Check each PvP LB to see if it matches this job
+            foreach (var action in pvpLimitBreaks)
+            {
+                if (IsJobCompatible(action.ClassJobCategory.Value, job))
+                {
+                    return action;
+                }
+            }
+
+            return null;
+        }
+        catch (Exception)
+        {
+            // If any error occurs during lookup, return null
+            return null;
+        }
+    }
+
+    /// <summary>
+    /// Checks if a job is compatible with a class job category.
+    /// </summary>
+    /// <param name="category">The class job category.</param>
+    /// <param name="targetJob">The job to check.</param>
+    /// <returns>True if compatible; otherwise, false.</returns>
+    private static bool IsJobCompatible(ClassJobCategory category, ClassJob targetJob)
+    {
+        // Use a more reliable method to check job compatibility
+        // This replaces the fragile reflection-based approach
+        return targetJob.Abbreviation.ToString() switch
+        {
+            "PLD" => category.PLD,
+            "WAR" => category.WAR,
+            "DRK" => category.DRK,
+            "GNB" => category.GNB,
+            "WHM" => category.WHM,
+            "SCH" => category.SCH,
+            "AST" => category.AST,
+            "SGE" => category.SGE,
+            "MNK" => category.MNK,
+            "DRG" => category.DRG,
+            "NIN" => category.NIN,
+            "SAM" => category.SAM,
+            "RPR" => category.RPR,
+            "VPR" => category.VPR,
+            "BRD" => category.BRD,
+            "MCH" => category.MCH,
+            "DNC" => category.DNC,
+            "BLM" => category.BLM,
+            "SMN" => category.SMN,
+            "RDM" => category.RDM,
+            "PCT" => category.PCT,
+            "BLU" => category.BLU,
+            _ => false
+        };
     }
 
     /// <summary>

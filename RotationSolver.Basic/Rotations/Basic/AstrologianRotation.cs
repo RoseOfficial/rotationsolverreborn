@@ -102,7 +102,7 @@ public partial class AstrologianRotation
     #region Debug
 
     /// <inheritdoc/>
-    public override void DisplayStatus()
+    public override void DisplayBaseStatus()
     {
         ImGui.Text($"DrawnCard: {string.Join(", ", DrawnCard)}");
         ImGui.Text($"DrawnCrownCard: {DrawnCrownCard}");

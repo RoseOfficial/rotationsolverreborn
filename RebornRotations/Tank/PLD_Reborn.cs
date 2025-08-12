@@ -1,6 +1,4 @@
-﻿using Dalamud.Interface.Colors;
-
-namespace RebornRotations.Tank;
+﻿namespace RebornRotations.Tank;
 
 [Rotation("Reborn", CombatType.PvE, GameVersion = "7.3")]
 [SourceCode(Path = "main/RebornRotations/Tank/PLD_Reborn.cs")]
@@ -63,12 +61,9 @@ public sealed class PLD_Reborn : PaladinRotation
     #endregion
 
     #region Tracking Properties
-    public override void DisplayStatus()
+    public override void DisplayRotationStatus()
     {
-        ImGui.TextColored(ImGuiColors.DalamudViolet, "Rotation Tracking:");
         ImGui.Text($"Use Oath: {UseOath(out _)}");
-        ImGui.TextColored(ImGuiColors.DalamudViolet, "Base Tracking:");
-        base.DisplayStatus();
     }
     #endregion
 

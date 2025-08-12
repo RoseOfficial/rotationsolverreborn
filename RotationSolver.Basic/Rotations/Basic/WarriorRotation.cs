@@ -68,7 +68,7 @@ public partial class WarriorRotation
 
     #region Debug
     /// <inheritdoc/>
-    public override void DisplayStatus()
+    public override void DisplayBaseStatus()
     {
         ImGui.Text("InnerReleaseStacks: " + InnerReleaseStacks.ToString());
         ImGui.Text("BerserkStacks: " + BerserkStacks.ToString());

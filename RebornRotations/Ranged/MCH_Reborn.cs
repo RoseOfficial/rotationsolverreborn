@@ -1,6 +1,4 @@
-﻿using Dalamud.Interface.Colors;
-
-namespace RebornRotations.Ranged;
+﻿namespace RebornRotations.Ranged;
 
 [Rotation("Reborn", CombatType.PvE, GameVersion = "7.3")]
 [SourceCode(Path = "main/RebornRotations/Ranged/MCH_Reborn.cs")]
@@ -251,7 +249,7 @@ public sealed class MCH_Reborn : MachinistRotation
             return true;
         }
 
-        if (IsLastAction(false, HyperchargePvE))
+        if (IsLastAction(false, HyperchargePvE) && HeatBlastPvE.EnoughLevel)
         {
             return false;
         }
@@ -313,9 +311,12 @@ public sealed class MCH_Reborn : MachinistRotation
         }
 
         // 1 AOE
-        if (SpreadShotPvE.CanUse(out act))
+        if (!IsOverheated)
         {
-            return true;
+            if (SpreadShotPvE.CanUse(out act))
+            {
+                return true;
+            }
         }
 
         // 3 ST
@@ -339,13 +340,10 @@ public sealed class MCH_Reborn : MachinistRotation
     #endregion
 
     #region Tracking Properties
-    public override void DisplayStatus()
+    public override void DisplayRotationStatus()
     {
-        ImGui.TextColored(ImGuiColors.DalamudViolet, "Rotation Tracking:");
         ImGui.Text($"QueenStep: {_currentStep}");
         ImGui.Text($"Step Pair Found: {foundStepPair}");
-        ImGui.TextColored(ImGuiColors.DalamudYellow, "Base Tracking:");
-        base.DisplayStatus();
     }
     #endregion
 

@@ -51,7 +51,7 @@ public partial class SageRotation
     }
 
     /// <inheritdoc/>
-    public override void DisplayStatus()
+    public override void DisplayBaseStatus()
     {
         ImGui.Text("HasEukrasia: " + HasEukrasia.ToString());
         ImGui.Text("Addersgall: " + Addersgall.ToString());

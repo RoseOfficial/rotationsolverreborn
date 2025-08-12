@@ -166,7 +166,7 @@ public partial class NinjaRotation
 
     #region Draw Debug
     /// <inheritdoc/>
-    public override void DisplayStatus()
+    public override void DisplayBaseStatus()
     {
         ImGui.Text($"Ninki: {Ninki}");
         ImGui.Text($"Kazematoi: {Kazematoi}");

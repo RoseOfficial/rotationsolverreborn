@@ -1,4 +1,3 @@
-using Dalamud.Interface.Colors;
 using System.ComponentModel;
 
 namespace RebornRotations.Healer;
@@ -66,16 +65,6 @@ public sealed class WHM_Reborn : WhiteMageRotation
 
         [Description("Reserve the last charge for manual use")]
         ReserveLastCharge,
-    }
-    #endregion
-
-    #region Tracking Properties
-    public override void DisplayStatus()
-    {
-        ImGui.TextColored(ImGuiColors.DalamudViolet, "Rotation Tracking:");
-        ImGui.Text($"Use Lily Heal: {UseLily(out _)}");
-        ImGui.TextColored(ImGuiColors.DalamudViolet, "Base Tracking:");
-        base.DisplayStatus();
     }
     #endregion
 
@@ -366,9 +355,14 @@ public sealed class WHM_Reborn : WhiteMageRotation
 
         bool liliesNearlyFull = Lily == 2 && LilyTime < LilyOvercapTime;
         bool liliesFullNoBlood = Lily == 3;
-        if (UseLilyWhenFull && (liliesNearlyFull || liliesFullNoBlood) && AfflatusMiseryPvE.EnoughLevel && BloodLily < 3)
+        if (AfflatusMiseryPvE.EnoughLevel && UseLilyWhenFull && (liliesNearlyFull || liliesFullNoBlood) && AfflatusMiseryPvE.EnoughLevel && BloodLily < 3)
         {
-            if (UseLily(out act))
+            if (AfflatusRapturePvE.CanUse(out act, skipAoeCheck: true))
+            {
+                return true;
+            }
+
+            if (AfflatusSolacePvE.CanUse(out act))
             {
                 return true;
             }
@@ -394,9 +388,14 @@ public sealed class WHM_Reborn : WhiteMageRotation
             return true;
         }
 
-        if (UseLilyDowntime && (liliesNearlyFull || liliesFullNoBlood))
+        if (AfflatusMiseryPvE.EnoughLevel && UseLilyDowntime && (liliesNearlyFull || liliesFullNoBlood))
         {
-            if (UseLily(out act))
+            if (AfflatusRapturePvE.CanUse(out act, skipAoeCheck: true))
+            {
+                return true;
+            }
+
+            if (AfflatusSolacePvE.CanUse(out act))
             {
                 return true;
             }
@@ -441,16 +440,6 @@ public sealed class WHM_Reborn : WhiteMageRotation
 
             return base.CanHealAreaSpell && (GCDHeal || aliveHealerCount == 1);
         }
-    }
-
-    private bool UseLily(out IAction? act)
-    {
-        if (AfflatusRapturePvE.CanUse(out act, skipAoeCheck: true))
-        {
-            return true;
-        }
-
-        return AfflatusSolacePvE.CanUse(out act);
     }
     #endregion
 }

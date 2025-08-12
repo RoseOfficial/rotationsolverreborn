@@ -1167,7 +1167,7 @@ public partial class BlueMageRotation
     /// <summary>
     ///
     /// </summary>
-    public override void DisplayStatus()
+    public override void DisplayBaseStatus()
     {
         ImGui.TextWrapped($"Aetheric Mimicry Role: {BlueId}");
         ImGui.Text($"This rotation requires the following actions:");

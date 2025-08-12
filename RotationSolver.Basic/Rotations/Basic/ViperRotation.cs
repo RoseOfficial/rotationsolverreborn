@@ -141,7 +141,7 @@ public partial class ViperRotation
     #endregion
 
     /// <inheritdoc/>
-    public override void DisplayStatus()
+    public override void DisplayBaseStatus()
     {
         ImGui.Text($"SerpentOffering: {SerpentOffering}/100");
         ImGui.Text($"RattlingCoilStacks: {RattlingCoilStacks}/{MaxRattling}");

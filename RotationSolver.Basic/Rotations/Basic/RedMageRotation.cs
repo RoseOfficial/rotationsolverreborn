@@ -207,7 +207,7 @@ public partial class RedMageRotation
 
     #region Status Display
     /// <inheritdoc/>
-    public override void DisplayStatus()
+    public override void DisplayBaseStatus()
     {
         ImGui.Text("WhiteMana: " + WhiteMana.ToString());
         ImGui.Text("BlackMana: " + BlackMana.ToString());

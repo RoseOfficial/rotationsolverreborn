@@ -6,20 +6,19 @@ namespace RotationSolver.GameData.Getters.Actions;
 /// <summary>
 /// Abstract base class for getting action rows from the Excel sheet.
 /// </summary>
-internal abstract class ActionGetterBase : ExcelRowGetter<Action>
+/// <remarks>
+/// Initializes a new instance of the <see cref="ActionGetterBase"/> class.
+/// </remarks>
+/// <param name="gameData">The game data.</param>
+internal abstract class ActionGetterBase(Lumina.GameData gameData) : ExcelRowGetter<Action>(gameData)
 {
-    /// <summary>
-    /// Initializes a new instance of the <see cref="ActionGetterBase"/> class.
-    /// </summary>
-    /// <param name="gameData">The game data.</param>
-    protected ActionGetterBase(Lumina.GameData gameData) : base(gameData) { }
 
     /// <summary>
     /// Gets the list of added names.
     /// </summary>
-    public List<string> AddedNames { get; } = new();
+    public List<string> AddedNames { get; } = [];
 
-    private string[] _notCombatJobs = Array.Empty<string>();
+    private string[] _notCombatJobs = [];
 
     /// <summary>
     /// Called before creating the list of items.
@@ -27,10 +26,9 @@ internal abstract class ActionGetterBase : ExcelRowGetter<Action>
     protected override void BeforeCreating()
     {
         AddedNames.Clear();
-        _notCombatJobs = _gameData.GetExcelSheet<ClassJob>()!
+        _notCombatJobs = [.. _gameData.GetExcelSheet<ClassJob>()!
             .Where(c => c.ClassJobCategory.RowId is 32 or 33)
-            .Select(c => c.Abbreviation.ToString())
-            .ToArray();
+            .Select(c => c.Abbreviation.ToString())];
         base.BeforeCreating();
     }
 

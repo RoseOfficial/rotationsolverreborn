@@ -141,7 +141,7 @@ public partial class GunbreakerRotation
     #region Debug Status
 
     /// <inheritdoc/>
-    public override void DisplayStatus()
+    public override void DisplayBaseStatus()
     {
         ImGui.Text("InGnashingFang: " + InGnashingFang.ToString());
         ImGui.Text("InReignCombo: " + InReignCombo.ToString());

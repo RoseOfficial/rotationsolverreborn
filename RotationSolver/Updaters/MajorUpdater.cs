@@ -174,6 +174,9 @@ internal static class MajorUpdater
             // Update various combat tracking perameters,
             // combat time, blue mage/dutyaction slot info, player movement time, player dead status and MP timer.
             ActionUpdater.UpdateCombatInfo();
+            
+            // Update timing tweaks
+            RotationSolver.Basic.Helpers.ActionManagerEx.Instance.UpdateTweaks();
 
             // Update displaying the additional UI windows
             RotationSolverPlugin.UpdateDisplayWindow();

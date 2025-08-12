@@ -202,7 +202,7 @@ public partial class ReaperRotation
     #region Debug
 
     /// <inheritdoc/>
-    public override void DisplayStatus()
+    public override void DisplayBaseStatus()
     {
         ImGui.Text("EnshroudedTiemRemaining: " + EnshroudedTiemRemaining.ToString());
         ImGui.Text("HasEnshrouded: " + HasEnshrouded.ToString());

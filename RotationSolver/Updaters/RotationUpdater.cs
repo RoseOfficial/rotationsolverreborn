@@ -547,11 +547,31 @@ internal static class RotationUpdater
             string key = string.Empty;
             if (a is IBaseAction act)
             {
+                // Filter out dead actions
+                if (act.IconID == 784)
+                {
+                    continue;
+                }
+                // Filter out special actions, usually related to duty specifc mechanics but not duty actions
+                else if (act.Info.IsSpecialAction)
+                {
+                    continue;
+                }
+                // Filter out Mount actions
+                else if (act.Info.IsMountAction)
+                {
+                    continue;
+                }
+                // Filter out anything but sprint for now
+                else if (act.Info.IsSystemAction && act.AdjustedID != 3)
+                {
+                    continue;
+                }
                 if (!act.Info.IsOnSlot)
                 {
                     key = string.Empty;
                 }
-                else if (act.Action.ActionCategory.RowId is 10 or 11)
+                else if (act.Info.IsSystemAction)
                 {
                     key = "System Action";
                 }
@@ -559,7 +579,11 @@ internal static class RotationUpdater
                 {
                     key = "Role Action";
                 }
-                else if (act.Info.IsLimitBreak)
+                else if (act.Info.IsPvPLimitBreak && DataCenter.IsPvP)
+                {
+                    key = "PvP Limit Break";
+                }
+                else if (act.Info.IsLimitBreak && !DataCenter.IsPvP)
                 {
                     key = "Limit Break";
                 }
@@ -580,20 +604,18 @@ internal static class RotationUpdater
                     }
                 }
             }
-            else if (a is IBaseItem)
+            else if (a is IBaseItem && !DataCenter.IsPvP)
             {
                 key = "Item";
             }
 
-            if (!string.IsNullOrEmpty(key))
+            // Always add to groups since we now have meaningful keys for all cases
+            if (!groups.TryGetValue(key, out List<IAction>? list))
             {
-                if (!groups.TryGetValue(key, out List<IAction>? list))
-                {
-                    list = [];
-                    groups[key] = list;
-                }
-                list.Add(a);
+                list = [];
+                groups[key] = list;
             }
+            list.Add(a);
         }
 
         // Sort groups by key
@@ -637,7 +659,6 @@ internal static class RotationUpdater
         return [];
     }
 
-    // Helper class for grouping (since LINQ's Grouping is not available)
     private class SimpleGrouping<TKey, TElement>(TKey key, IEnumerable<TElement> elements) : IGrouping<TKey, TElement>
     {
         private readonly IEnumerable<TElement> _elements = elements;

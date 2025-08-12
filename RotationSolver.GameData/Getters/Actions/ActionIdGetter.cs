@@ -5,16 +5,12 @@ namespace RotationSolver.GameData.Getters.Actions;
 /// <summary>
 /// Class for getting action IDs from the Excel sheet.
 /// </summary>
-internal class ActionIdGetter : ActionGetterBase
+/// <remarks>
+/// Initializes a new instance of the <see cref="ActionIdGetter"/> class.
+/// </remarks>
+/// <param name="gameData">The game data.</param>
+internal class ActionIdGetter(Lumina.GameData gameData) : ActionGetterBase(gameData)
 {
-    /// <summary>
-    /// Initializes a new instance of the <see cref="ActionIdGetter"/> class.
-    /// </summary>
-    /// <param name="gameData">The game data.</param>
-    public ActionIdGetter(Lumina.GameData gameData)
-        : base(gameData)
-    {
-    }
 
     /// <summary>
     /// Converts the specified action to its code representation.

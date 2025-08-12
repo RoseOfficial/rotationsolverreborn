@@ -99,7 +99,7 @@ public partial class DragoonRotation
     #region Draw Debug
 
     /// <inheritdoc/>
-    public override void DisplayStatus()
+    public override void DisplayBaseStatus()
     {
         ImGui.Text("EyeCount: " + EyeCount.ToString());
         ImGui.Text("FocusCount: " + FocusCount.ToString());

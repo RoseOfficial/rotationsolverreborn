@@ -5,8 +5,6 @@ namespace RotationSolver.UI;
 internal abstract class CtrlWindow(string name) : Window(name, BaseFlags)
 {
     public const ImGuiWindowFlags BaseFlags = ImGuiWindowFlags.NoScrollbar
-                        | ImGuiWindowFlags.NoCollapse
-                        | ImGuiWindowFlags.NoTitleBar
                         | ImGuiWindowFlags.NoNav
                         | ImGuiWindowFlags.NoScrollWithMouse;
 

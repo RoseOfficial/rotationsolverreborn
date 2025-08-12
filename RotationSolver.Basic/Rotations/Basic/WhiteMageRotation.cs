@@ -81,7 +81,7 @@ public partial class WhiteMageRotation
 
     #region Debug
     /// <inheritdoc/>
-    public override void DisplayStatus()
+    public override void DisplayBaseStatus()
     {
         ImGui.Text("SacredSightStacks: " + SacredSightStacks.ToString());
         ImGui.Text("LilyTime: " + LilyTime.ToString());

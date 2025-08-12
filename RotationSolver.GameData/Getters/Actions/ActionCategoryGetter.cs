@@ -8,7 +8,7 @@ namespace RotationSolver.GameData.Getters.Actions;
 internal class ActionCategoryGetter(Lumina.GameData gameData)
     : ExcelRowGetter<ActionCategory>(gameData)
 {
-    private readonly HashSet<string> _addedNames = new();
+    private readonly HashSet<string> _addedNames = [];
 
     /// <summary>
     /// Called before creating the list of items. Clears the list of added names.
@@ -41,13 +41,9 @@ internal class ActionCategoryGetter(Lumina.GameData gameData)
     {
         var name = item.Name.ToString().ToPascalCase();
 
-        if (_addedNames.Contains(name))
+        if (!_addedNames.Add(name))
         {
             name += "_" + item.RowId.ToString();
-        }
-        else
-        {
-            _addedNames.Add(name);
         }
 
         return $"""

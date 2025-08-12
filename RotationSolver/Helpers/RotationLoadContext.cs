@@ -1,7 +1,6 @@
 ﻿using Dalamud.Plugin;
 using ECommons.Logging;
 using Lumina.Excel;
-//using Lumina.Excel.CustomSheets;
 using System.Runtime.Loader;
 
 namespace RotationSolver.Helpers;
@@ -15,15 +14,14 @@ internal class RotationLoadContext(DirectoryInfo? directoryInfo)
 
     static RotationLoadContext()
     {
-        Assembly[] assemblies = new Assembly[]
-        {
+        Assembly[] assemblies =
+        [
             typeof(RotationSolverPlugin).Assembly,
-            //typeof(Resolver).Assembly,
             typeof(IDalamudPluginInterface).Assembly,
             typeof(DataCenter).Assembly,
             typeof(SheetAttribute).Assembly,
-            //typeof(QuestDialogueText).Assembly,
-        };
+            typeof(ImGui).Assembly,
+        ];
 
         foreach (Assembly assembly in assemblies)
         {

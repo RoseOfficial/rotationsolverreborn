@@ -15,7 +15,7 @@ public partial class DutyRotation
     /// <summary>
     /// Displays the rotation status on the window.
     /// </summary>
-    public virtual void DisplayStatus()
+    public virtual void DisplayDutyStatus()
     {
         if (!DataCenter.IsInOccultCrescentOp)
             return;
@@ -56,7 +56,7 @@ public partial class DutyRotation
     /// 
     /// </summary>
     public static StatusID[] RotationLockoutStatus { get; } =
-    {
+    [
         StatusID.Reawakened,
         StatusID.Overheated,
         StatusID.InnerRelease,
@@ -64,7 +64,7 @@ public partial class DutyRotation
         StatusID.Mudra,
         StatusID.TenChiJin,
         StatusID.FullMetalMachinist
-    };
+    ];
 
     /// <summary>
     /// Has a status that is important to the main rotation and should prevent Duty Actions from being executed.

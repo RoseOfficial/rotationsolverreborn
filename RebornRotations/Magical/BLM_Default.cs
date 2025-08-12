@@ -1,6 +1,4 @@
-﻿using Dalamud.Interface.Colors;
-
-namespace RebornRotations.Magical;
+﻿namespace RebornRotations.Magical;
 
 [Rotation("Default", CombatType.PvE, GameVersion = "7.3")]
 [SourceCode(Path = "main/BasicRotations/Magical/BLM_Default.cs")]
@@ -28,9 +26,8 @@ public class BLM_Default : BlackMageRotation
     #endregion
 
     #region Tracking Properties
-    public override void DisplayStatus()
+    public override void DisplayRotationStatus()
     {
-        ImGui.TextColored(ImGuiColors.DalamudViolet, "Rotation Tracking:");
         ImGui.Text($"In InFireOrIce Logic: {InFireOrIce(out _, out _)}");
         ImGui.Text($"In GoFire Logic: {GoFire(out _)}");
         ImGui.Text($"In MaintainIce Logic: {MaintainIce(out _)}");
@@ -43,8 +40,6 @@ public class BLM_Default : BlackMageRotation
         ImGui.Text($"In AddElementBase Logic: {AddElementBase(out _)}");
         ImGui.Text($"In UsePolyglot Logic: {UsePolyglot(out _)}");
         ImGui.Text($"In MaintainStatus Logic: {MaintainStatus(out _)}");
-        ImGui.TextColored(ImGuiColors.DalamudYellow, "Base Tracking:");
-        base.DisplayStatus();
     }
     #endregion
 

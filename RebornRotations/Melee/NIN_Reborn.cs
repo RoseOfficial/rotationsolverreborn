@@ -43,12 +43,11 @@ public sealed class NIN_Reborn : NinjaRotation
 
     private bool KeepKassatsuinBurst => !Player.WillStatusEndGCD(2, 0, true, StatusID.Kassatsu) && HasKassatsu && !InTrickAttack && !IsExecutingMudra;
 
-    public override void DisplayStatus()
+    public override void DisplayRotationStatus()
     {
         ImGui.Text($"Last Ninjutsu Action Cleared From Queue: {_lastNinActionAim}");
         ImGui.Text($"Current Ninjutsu Action: {_ninActionAim}");
         ImGui.Text($"Ninjutsu ID: {AdjustId(NinjutsuPvEid)}");
-        base.DisplayStatus();
     }
     #endregion
 
