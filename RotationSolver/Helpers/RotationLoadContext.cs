@@ -1,4 +1,5 @@
 ﻿using Dalamud.Plugin;
+using ECommons;
 using ECommons.Logging;
 using Lumina.Excel;
 using System.Runtime.Loader;
@@ -21,6 +22,8 @@ internal class RotationLoadContext(DirectoryInfo? directoryInfo)
             typeof(DataCenter).Assembly,
             typeof(SheetAttribute).Assembly,
             typeof(ImGui).Assembly,
+            typeof(FFXIVClientStructs.ThisAssembly).Assembly,
+            typeof(ECommons.DalamudServices.Svc).Assembly,
         ];
 
         foreach (Assembly assembly in assemblies)

@@ -31,7 +31,7 @@ public class ActionTimelineManager : IDisposable
     private readonly Hook<OnActorControlDelegate>? _onActorControlHook = null;
 
     private delegate void OnCastDelegate(uint sourceId, IntPtr sourceCharacter);
-    [Signature("40 56 41 56 48 81 EC ?? ?? ?? ?? 48 8B F2", DetourName = nameof(OnCast))]
+    [Signature("40 53 57 48 81 EC ?? ?? ?? ?? 48 8B FA 8B D1", DetourName = nameof(OnCast))]
     private readonly Hook<OnCastDelegate>? _onCastHook = null;
 
     public DateTime EndTime { get; private set; } = DateTime.Now;

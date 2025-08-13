@@ -3,8 +3,6 @@ using ECommons.ExcelServices;
 using ECommons.GameFunctions;
 using ECommons.GameHelpers;
 using ECommons.Logging;
-using RotationSolver.Basic;
-using System.Transactions;
 
 namespace RotationSolver.Updaters;
 

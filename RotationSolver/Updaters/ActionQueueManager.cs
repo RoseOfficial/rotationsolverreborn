@@ -12,10 +12,6 @@ namespace RotationSolver.Updaters
         // Action Manager Hook for intercepting user input
         private static Hook<UseActionDelegate>? _useActionHook;
 
-        // Configuration flags
-        public static bool InterceptUserInput { get; set; } = Service.Config.InterceptAction;
-        public static double DefaultQueueTime { get; set; } = Service.Config.InterceptActionTime;
-
         // Delegates for ActionManager functions
         private unsafe delegate bool UseActionDelegate(ActionManager* actionManager, uint actionType, uint actionID, ulong targetObjectID, uint param, uint useType, int pvp, bool* isGroundTarget);
 
@@ -32,21 +28,20 @@ namespace RotationSolver.Updaters
         }
 
         private static unsafe void InitializeActionHooks()
-        {
+        {            
             try
             {
-                var useActionAddress = (nint)ActionManager.Addresses.UseAction.Value;
-                var useActionLocationAddress = (nint)ActionManager.Addresses.UseActionLocation.Value;
+                var useActionAddress = ActionManager.Addresses.UseAction.Value;
 
                 _useActionHook = Svc.Hook.HookFromAddress<UseActionDelegate>(useActionAddress, UseActionDetour);
 
                 _useActionHook?.Enable();
 
-                PluginLog.Debug("[Watcher] Action interception hooks initialized");
+                PluginLog.Debug("[ActionQueueManager] Action interception hooks initialized");
             }
             catch (Exception ex)
             {
-                PluginLog.Error($"[Watcher] Failed to initialize action hooks: {ex}");
+                PluginLog.Error($"[ActionQueueManager] Failed to initialize action hooks: {ex}");
             }
         }
 
@@ -58,17 +53,17 @@ namespace RotationSolver.Updaters
                 _useActionHook?.Dispose();
                 _useActionHook = null;
 
-                PluginLog.Debug("[Watcher] Action interception hooks disposed");
+                PluginLog.Debug("[ActionQueueManager] Action interception hooks disposed");
             }
             catch (Exception ex)
             {
-                PluginLog.Error($"[Watcher] Failed to dispose action hooks: {ex}");
+                PluginLog.Error($"[ActionQueueManager] Failed to dispose action hooks: {ex}");
             }
         }
 
         private static unsafe bool UseActionDetour(ActionManager* actionManager, uint actionType, uint actionID, ulong targetObjectID, uint param, uint useType, int pvp, bool* isGroundTarget)
         {
-            if (Player.Available && InterceptUserInput && DataCenter.State && DataCenter.InCombat)
+            if (Player.Available && Service.Config.InterceptAction2 && DataCenter.State && DataCenter.InCombat && !DataCenter.IsPvP)
             {
                 try
                 {
@@ -81,12 +76,15 @@ namespace RotationSolver.Updaters
                 }
                 catch (Exception ex)
                 {
-                    PluginLog.Error($"[Watcher] Error in UseActionDetour: {ex}");
+                    PluginLog.Error($"[ActionQueueManager] Error in UseActionDetour: {ex}");
                 }
             }
 
-            // Call original function if not intercepted
-            return _useActionHook!.Original(actionManager, actionType, actionID, targetObjectID, param, useType, pvp, isGroundTarget);
+            if (_useActionHook?.Original != null)
+            {
+                return _useActionHook.Original(actionManager, actionType, actionID, targetObjectID, param, useType, pvp, isGroundTarget);
+            }
+            return false;
         }
 
         private static bool ShouldInterceptAction(ActionType actionType, uint actionId)
@@ -95,19 +93,38 @@ namespace RotationSolver.Updaters
             if (actionType != ActionType.Action)
                 return false;
 
-            // Never intercept items - they should always go through the original game logic
-            // to ensure status effects are properly applied
-            if (actionType == ActionType.Item)
-                return false;
-
             if (ActionUpdater.NextAction != null && actionId == ActionUpdater.NextAction.AdjustedID)
                 return false;
 
             // Don't intercept auto-attacks
             var actionSheet = Svc.Data.GetExcelSheet<Lumina.Excel.Sheets.Action>();
             var action = actionSheet?.GetRow(actionId);
-            if (action?.ActionCategory.Value.RowId == (uint)ActionCate.Autoattack)
+            var type = action?.ActionCategory.Value.RowId;
+
+            if (type == (uint)ActionCate.None)
+            {
                 return false;
+            }
+
+            if (type == (uint)ActionCate.Autoattack)
+            {
+                return false;
+            }
+
+            if (!Service.Config.InterceptSpell2 && type == (uint)ActionCate.Spell)
+            {
+                return false;
+            }
+
+            if (!Service.Config.InterceptWeaponskill2 && type == (uint)ActionCate.Weaponskill)
+            {
+                return false;
+            }
+
+            if (!Service.Config.InterceptAbility2 && type == (uint)ActionCate.Ability)
+            {
+                return false;
+            }
 
             return true;
         }
@@ -128,8 +145,8 @@ namespace RotationSolver.Updaters
                 // Find matching action by ID
                 IAction? matchingAction = null;
                 foreach (var action in allActions)
-                {
-                    if (action.AdjustedID == actionId)
+                {                  
+                    if (action.ID == Service.GetAdjustedActionId(actionId))
                     {
                         matchingAction = action;
                         break;
@@ -141,21 +158,21 @@ namespace RotationSolver.Updaters
                     // Use the RSCommand system to queue the action - this is the correct approach
                     // The action will be queued using DataCenter.AddCommandAction and executed via RSCommands.DoAction()
                     string actionName = matchingAction.Name;
-                    string commandString = $"{actionName}-{DefaultQueueTime}";
+                    string commandString = $"{actionName}-{Service.Config.InterceptActionTime}";
 
                     // Use the DoActionCommand which properly integrates with the RSCommand system
                     RSCommands.DoActionCommand(commandString);
 
-                    PluginLog.Debug($"[Watcher] Intercepted and queued action via RSCommand: {matchingAction.Name} (ID: {actionId})");
+                    PluginLog.Debug($"[ActionQueueManager] Intercepted and queued action via RSCommand: {matchingAction.Name} (ID: {actionId})");
                 }
                 else
                 {
-                    PluginLog.Warning($"[Watcher] Could not find matching action for intercepted ID: {actionId}");
+                    PluginLog.Warning($"[ActionQueueManager] Could not find matching action for intercepted ID: {actionId}");
                 }
             }
             catch (Exception ex)
             {
-                PluginLog.Error($"[Watcher] Error handling intercepted action {actionId}: {ex}");
+                PluginLog.Error($"[ActionQueueManager] Error handling intercepted action {actionId}: {ex}");
             }
         }
     }

@@ -43,9 +43,21 @@ internal partial class Configs : IPluginConfiguration
     public MacroInfo DutyStart { get; set; } = new MacroInfo();
     public MacroInfo DutyEnd { get; set; } = new MacroInfo();
 
-    [ConditionBool, UI("Intercept player input and queue it for RSR to execute the action. (Experimental)",
+    [ConditionBool, UI("Intercept player input and queue it for RSR to execute the action. (Experimental, PvE only at the moment)",
     Filter = AutoActionUsage, Section = 5)]
-    private static readonly bool _interceptAction = true;
+    private static readonly bool _interceptAction2 = false;
+
+    [ConditionBool, UI("Intercept Spells. (Experimental)",
+    Filter = AutoActionUsage, Section = 5)]
+    private static readonly bool _interceptSpell2 = false;
+
+    [ConditionBool, UI("Intercept Weaponskills. (Experimental)",
+    Filter = AutoActionUsage, Section = 5)]
+    private static readonly bool _interceptWeaponskill2 = false;
+
+    [ConditionBool, UI("Intercept Abilities. (Experimental)",
+    Filter = AutoActionUsage, Section = 5)]
+    private static readonly bool _interceptAbility2 = false;
 
     [UI("Intercepted action execution window",
     Filter = AutoActionUsage, Section = 5)]

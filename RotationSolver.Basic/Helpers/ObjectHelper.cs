@@ -25,10 +25,10 @@ namespace RotationSolver.Basic.Helpers;
 public static class ObjectHelper
 {
     private static readonly EventHandlerContent[] _eventType =
-    {
+    [
         EventHandlerContent.TreasureHuntDirector,
         EventHandlerContent.Quest,
-    };
+    ];
 
     private static readonly ConcurrentDictionary<string, Regex> _regexCache = [];
 
@@ -134,7 +134,7 @@ public static class ObjectHelper
             return false;
         }
 
-        if (battleChara.IsSpecialExecptionImmune())
+        if (battleChara.IsSpecialExceptionImmune())
         {
             return false; // For specific named mobs that are immune to everything.
         }
@@ -347,7 +347,7 @@ public static class ObjectHelper
         return battleChara.GetEventType() == EventHandlerContent.FateDirector;
     }
 
-    internal static bool IsSpecialExecptionImmune(this IBattleChara battleChara)
+    internal static bool IsSpecialExceptionImmune(this IBattleChara battleChara)
     {
         if (battleChara == null)
         {
@@ -590,17 +590,13 @@ public static class ObjectHelper
             return false;
         }
 
-        if (battleChara is IBattleChara npc)
+        foreach (uint id in DataCenter.PrioritizedNameIds)
         {
-            foreach (uint id in DataCenter.PrioritizedNameIds)
+            if (battleChara.NameId == id)
             {
-                if (npc.NameId == id)
-                {
-                    return true;
-                }
+                return true;
             }
         }
-
         return false;
     }
 
@@ -754,13 +750,29 @@ public static class ObjectHelper
     {
         if (battleChara.NameId == 8145
             || battleChara.NameId == 10259
-            || battleChara.NameId == 12704)
+            || battleChara.NameId == 12704
+            || battleChara.NameId == 14052)
         {
             return true;
         }
         //8145 Root in Dohn Meg boss 2
         //10259 Cinduruva in The Tower of Zot
         //12704 Crystalline Debris
+
+        //14052 hellmaker
+        if (DataCenter.TerritoryID == 1292)
+        {
+            if (battleChara.NameId == 14052)
+            {
+                StatusID CellBlockCPrisoner = (StatusID)4544;
+                StatusID CellBlockDPrisoner = (StatusID)4545;
+
+                if (Player.Object.HasStatus(false, CellBlockCPrisoner) || Player.Object.HasStatus(false, CellBlockDPrisoner))
+                {
+                    return true;
+                }
+            }
+        }
 
         return false;
     }
@@ -782,7 +794,7 @@ public static class ObjectHelper
     /// List of NameIds that Undead enemies in Occult Crecent.
     /// </summary>
     public static uint[] IsOCUndeadList { get; } =
-    {
+    [
         13741, //Lifereaper
         13924, //Armor
         13922, //Ghost
@@ -791,7 +803,7 @@ public static class ObjectHelper
         13925, //Troubadour
         13923, //Geshunpest
         13927, //Dullahan
-    };
+    ];
 
     /// <summary>
     /// Check to see if Occult Crecent target is Undead.
@@ -805,7 +817,7 @@ public static class ObjectHelper
     /// List of NameIds that are immune to OC Slowga.
     /// </summary>
     public static uint[] IsOCSlowgaImmuneList { get; } =
-    {
+    [
         13933, //Marolith
         13893, //AnimatedDoll
         13894, //AnimatedDoll
@@ -822,7 +834,7 @@ public static class ObjectHelper
         13666, //Cloister Demon
         13668, //Cloister Torch
         13729, //Megaloknight
-    };
+    ];
 
     /// <summary>
     /// Check to see if target is immune to Slowga.
@@ -836,7 +848,7 @@ public static class ObjectHelper
     /// List of NameIds that are immune to OC Doom.
     /// </summary>
     public static uint[] IsOCDoomImmuneList { get; } =
-    {
+    [
         13893, //AnimatedDoll
         13894, //AnimatedDoll
         13917, //Sculpture
@@ -859,7 +871,7 @@ public static class ObjectHelper
         13666, //Cloister Demon
         13668, //Cloister Torch
         13729, //Megaloknight
-    };
+    ];
 
     /// <summary>
     /// Check to see if target is immune to Phantom Doom.
@@ -873,7 +885,7 @@ public static class ObjectHelper
     /// List of NameIds that are immune to OC Stun.
     /// </summary>
     public static uint[] IsOCStunImmuneList { get; } =
-    {
+    [
         13873, //Tormentor
         13891, //LionStatant
         13916, //Brachiosaur
@@ -890,7 +902,7 @@ public static class ObjectHelper
         13666, //Cloister Demon
         13668, //Cloister Torch
         13729, //Megaloknight
-    };
+    ];
 
     /// <summary>
     /// Check to see if target is immune to Stun.
@@ -904,7 +916,7 @@ public static class ObjectHelper
     /// List of NameIds that are immune to OC Freeze.
     /// </summary>
     public static uint[] IsOCFreezeImmuneList { get; } =
-    {
+    [
         13876, //Fan
         13917, //Sculpture
         13916, //Brachiosaur
@@ -923,7 +935,7 @@ public static class ObjectHelper
         13666, //Cloister Demon
         13668, //Cloister Torch
         13729, //Megaloknight
-    };
+    ];
 
     /// <summary>
     /// Check to see if target is immune to Freeze.
@@ -937,7 +949,7 @@ public static class ObjectHelper
     /// List of NameIds that are immune to OC Blind.
     /// </summary>
     public static uint[] IsOCBlindImmuneList { get; } =
-    {
+    [
         13931, //Chaochu
         13874, //Snapweed
         13932, //Leshy
@@ -954,7 +966,7 @@ public static class ObjectHelper
         13666, //Cloister Demon
         13668, //Cloister Torch
         13729, //Megaloknight
-    };
+    ];
 
     /// <summary>
     /// Check to see if target is immune to Blind.
@@ -968,7 +980,7 @@ public static class ObjectHelper
     /// List of NameIds that are immune to OC Paralysis.
     /// </summary>
     public static uint[] IsOCParalysisImmuneList { get; } =
-    {
+    [
         13931, //Chaochu
         13874, //Snapweed
         13932, //Leshy
@@ -991,7 +1003,7 @@ public static class ObjectHelper
         13666, //Cloister Demon
         13668, //Cloister Torch
         13729, //Megaloknight
-    };
+    ];
 
     /// <summary>
     /// Check to see if target is immune to Paralysis.
@@ -1004,38 +1016,6 @@ public static class ObjectHelper
     internal static unsafe uint GetNamePlateIcon(this IBattleChara battleChara)
     {
         return battleChara.Struct()->NamePlateIconId;
-    }
-
-    internal static int GetNameIconIdForBattleChara(this IBattleChara battleChara)
-    {
-        return 0;
-    }
-
-    /// <summary>
-    /// Is target a boss depends on the nameplateiconID.
-    /// </summary>
-    /// <param name="battleChara">the object.</param>
-    /// <returns></returns>
-    public static bool IsBossFromNameplateIcon(this IBattleChara battleChara)
-    {
-        if (battleChara == null)
-        {
-            return false;
-        }
-
-        if (Service.Config.DummyBoss && battleChara.IsDummy())
-        {
-            return true;
-        }
-
-        int icon = battleChara.GetNameIconIdForBattleChara();
-
-        if (icon == 61710 || icon == 61711 || icon == 61712)
-        {
-            return true;
-        }
-
-        return false;
     }
 
     internal static unsafe EventHandlerContent GetEventType(this IBattleChara battleChara)
@@ -2054,7 +2034,7 @@ public static class ObjectHelper
         {
             if (id == battleChara.GameObjectId)
             {
-                return now - time >= TimeSpan.FromSeconds(1);
+                return now - time <= TimeSpan.FromSeconds(1);
             }
         }
         return false;

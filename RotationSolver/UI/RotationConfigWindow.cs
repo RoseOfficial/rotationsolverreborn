@@ -3905,7 +3905,7 @@ public partial class RotationConfigWindow : Window
             ImGui.Text($"Is Others Players Mob: {battleChara.IsOthersPlayersMob()}");
             ImGui.Text($"Is Alliance: {battleChara.IsAllianceMember()}");
             ImGui.Text($"Is Enemy Action Check: {battleChara.IsEnemy()}");
-            ImGui.Text($"IsSpecialExecptionImmune: {battleChara.IsSpecialExecptionImmune()}");
+            ImGui.Text($"IsSpecialExecptionImmune: {battleChara.IsSpecialExceptionImmune()}");
             ImGui.Text($"IsSpecialImmune: {battleChara.IsSpecialImmune()}");
             ImGui.Text($"IsTopPriorityNamedHostile: {battleChara.IsTopPriorityNamedHostile()}");
             ImGui.Text($"IsTopPriorityHostile: {battleChara.IsTopPriorityHostile()}");
